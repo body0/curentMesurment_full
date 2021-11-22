@@ -2,7 +2,7 @@
 from paho.mqtt import client as mqtt_client
 import time
 import os.path
-import mesure from ioControl
+import ioControl
 # https://www.ti.com/lit/ds/symlink/ads1113.pdf?ts=1632622221919&ref_url=https%253A%252F%252F$
 
 broker = 'localhost'
@@ -30,7 +30,7 @@ def getVoltageTopic(id=0):
 
 
 def mesureAndPublish():
-    phaseList = mesure()
+    phaseList = ioControl.mesure()
     for phaseId in range(len(phaseList)):
         for val in [i]["curent_chA"]:
             client.publish(getCurentTopic(phaseId), val)
