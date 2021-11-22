@@ -95,6 +95,8 @@ def mesure():
     curBus.write_i2c_block_data(0x4b, 1, NULL_CONFIG)
     
     for i in range(len(phaseList)):
+        print(phaseList)
+        print(i)
         phaseList[i]["curent_chA"] = parseValuesInList(phaseList[i]["curent_chA"])
         phaseList[i]["curent_chB"] = parseValuesInList(phaseList[i]["curent_chB"])
         phaseList[i]["voltage"] = parseValuesInList(phaseList[i]["voltage"])
