@@ -64,6 +64,7 @@ def mesurePhase(addr_A, addr_B):
     curent_chB = [None] * SAMPLE_COUNT
     voltage = [None] * SAMPLE_COUNT
     
+    # NO VOLTAGE CONFIG
     curBus.write_i2c_block_data(addr_A, 1, CURENT_CONFIG_01)
     curBus.write_i2c_block_data(addr_B, 1, CURENT_CONFIG_23)
     time.sleep(0.005)
@@ -85,6 +86,7 @@ def mesure():
     print('START mesurment')
     phaseList = [None,None,None]
 
+    voltBus.write_i2c_block_data(0x48, 1, VOLTAGE_CONFIG)
     phaseList[0]= mesurePhase(0x4b, 0x49)
     phaseList[1]= mesurePhase(0x48, 0x4b)
     phaseList[2]= mesurePhase(0x49, 0x48)
