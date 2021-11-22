@@ -1,151 +1,86 @@
-import math
+from smbus2 import SMBus, i2c_msg
+import time
+import os.path
+import logger
+
+BOILER_GPIO_ID = 17
+SAMPLE_COUNT = 80
+
+curentBoilerState = False
+bus = SMBus(1)
 
 
-def scaleValues(data):
-    for sensor in data:
-        for i, val in enumerate(sensor):
-            sensor[i] = val / 0x8FF * 25 # * 0.512 
-    return data
+def getBoilerState():
+    global curentBoilerState
+    return curentBoilerState
 
-def run(data, targetSensorIndex):
-    targetSensorData = data[targetSensorIndex]
-    
-    x = []
-    y = []
-    dcCurent = 0
-    for i, dataPoint in enumerate(targetSensorData):
-        x.append(i)
-        y.append(dataPoint)
-        dcCurent = dcCurent + abs(dataPoint)
+def setBoilerState(targetState):
+    global curentBoilerState
+    logger.log(f'boiler set to: {targetState}')
+    writeGPIO(BOILER_GPIO_ID, not targetState)
+    curentBoilerState = targetState
+
+def setGPIO(portID):
+    with open("/sys/class/gpio/export", 'w') as file:
+        file.write(str(portID))
+    with open(f"/sys/class/gpio/gpio{portID}/direction", 'w') as file:
+        file.write("out")
+
+def writeGPIO(portID, value):
+    if not os.path.isdir(f"/sys/class/gpio/gpio{portID}"):
+       setGPIO(portID) 
+    with open(f"/sys/class/gpio/gpio{portID}/value", 'w') as file:
+        #print(f"/sys/class/gpio/gpio{portID}/value")
+        file.write('1' if value else '0')
+
+
+def mesure():
+    print('START mesurment')
+    mesurmentList = [None, None, None, None, None, None]
+    for i in range(len(mesurmentList)):
+        mesurmentList[i] = [None] * SAMPLE_COUNT
+
+    bus.write_i2c_block_data(72, 1, [0x08, 0xE3])
+    bus.write_i2c_block_data(73, 1, [0x08, 0xE3])
+    time.sleep(0.001)
+    startTime_A = time.time()
+    for i in range(SAMPLE_COUNT):
+        msg = bus.read_i2c_block_data(72, 0, 2)
+        mesurmentList[0][i] = msg
+        msg = bus.read_i2c_block_data(73, 0, 2)
+        mesurmentList[1][i] = msg
+    endTime_A = time.time()
+
+    bus.write_i2c_block_data(72, 1, [0x38, 0xE3])
+    bus.write_i2c_block_data(73, 1, [0x38, 0xE3])
+    time.sleep(0.001)
+    startTime_B = time.time()
+    for i in range(SAMPLE_COUNT):
+        msg = bus.read_i2c_block_data(72, 0, 2)
+        mesurmentList[2][i] = msg
+        msg = bus.read_i2c_block_data(73, 0, 2)
+        mesurmentList[3][i] = msg
+    endTime_B = time.time()
+
+    bus.write_i2c_block_data(72, 1, [0x1, 0x83]) #?
+    bus.write_i2c_block_data(73, 1, [0x1, 0x83]) #?
+
+    print(f'# EXEC TIME: {endTime_A - startTime_A}; {endTime_B - startTime_B}')
+    ret = [[], [], [], [], [], []]
+    for i in range(len(mesurmentList)):
+        if mesurmentList[i][0] == None:
+            continue
+        for j in range(len(mesurmentList[i])):
+            num = (mesurmentList[i][j][0] << 8) | mesurmentList[i][j][1]
+            shiftedNum = num >> 4
+            signNum = shiftedNum
+            if (signNum > 0x07FF):
+                signNum = signNum - 0x1000
+
+            ret[i].append(signNum)
         
-     # DC EQUVIVALENT
-    dcCurent = dcCurent / len(y) # /1.414213562
+    print('END mesurment')
+    return ret
 
-        
-    x_peek = []
-    y_peek = []
-    zeroLevel = 0
-    cutOffThreashold = 0.6
-    
-    
-    # PEEK SEARCH TOP
-    def searchTopPeeks():
-        peekStackLocal = [
-            [targetSensorData[0], 0]
-        ]
-        minPeekDistance = 7
-        for i in range(len(targetSensorData)):
-            lastMax = peekStackLocal[len(peekStackLocal)-1]
-            if lastMax[1] + minPeekDistance < i:
-                peekStackLocal.append([targetSensorData[i], i])
-            if  lastMax[0] < targetSensorData[i]:
-                peekStackLocal[len(peekStackLocal)-1] = [targetSensorData[i], i]
-                
-        # MAX PEEKS
-        #peekMaxStackLength = 3 if len(peekStackLocal) > 3 else len(peekStackLocal)
-        peekMaxStackStartOfset = 2
-        peekMaxStackLength = math.floor(len(peekStackLocal) /2.5) + peekMaxStackStartOfset
-        peekMaxStack = []
-        for peek in peekStackLocal:
-            peekMaxStack.append(abs(peek[0]))
-        peekMaxStack.sort(reverse=True)
-        peekMaxStack = peekMaxStack[peekMaxStackStartOfset:peekMaxStackLength]
-        peekMaxAvrg = 0
-        for peekMax in peekMaxStack:
-            peekMaxAvrg = peekMaxAvrg + peekMax
-        peekMaxAvrg = peekMaxAvrg / len(peekMaxStack)
-        
-        # DROP NOT MAX PEEKS
-        peekCutOff = peekMaxAvrg * (cutOffThreashold if peekMaxAvrg > 0 else 1/cutOffThreashold)
-        i = 0
-        while i < len(peekStackLocal):
-            peek = peekStackLocal[i]
-            if peek[0] < peekCutOff:
-                del peekStackLocal[i]
-            else:
-                i = i +1
-        
-        #return [peekStackLocal[:2], 0]
-        return [peekStackLocal, peekCutOff]
-
-    def searchBottomPeeks():
-        peekStackLocal = [
-            [targetSensorData[0], 0]
-        ]
-        minPeekDistance = 7
-        for i in range(len(targetSensorData)):
-            lastMax = peekStackLocal[len(peekStackLocal)-1]
-            if lastMax[1] + minPeekDistance < i:
-                peekStackLocal.append([targetSensorData[i], i])
-            if  lastMax[0] > targetSensorData[i]:
-                peekStackLocal[len(peekStackLocal)-1] = [targetSensorData[i], i]
-        
-        # MAX PEEKS
-        #peekMaxStackLength = 3 if len(peekStackLocal) > 3 else len(peekStackLocal)
-        peekMaxStackStartOfset = 2
-        peekMaxStackLength = math.floor(len(peekStackLocal) /2.5) + peekMaxStackStartOfset
-        peekMaxStack = []
-        for peek in peekStackLocal:
-            peekMaxStack.append(peek[0])
-        peekMaxStack.sort()
-        peekMaxStack = peekMaxStack[peekMaxStackStartOfset:peekMaxStackLength]
-        peekMaxAvrg = 0
-        for peekMax in peekMaxStack:
-            peekMaxAvrg = peekMaxAvrg + peekMax
-        peekMaxAvrg = peekMaxAvrg / len(peekMaxStack)
-
-        # DROP NOT MAX PEEKS
-        peekCutOff = peekMaxAvrg * (cutOffThreashold if peekMaxAvrg < 0 else 1/cutOffThreashold)
-        i = 0
-        while i < len(peekStackLocal):
-            peek = peekStackLocal[i]
-            if peek[0] > peekCutOff:
-                del peekStackLocal[i]
-            else:
-                i = i +1
-        return [peekStackLocal, peekCutOff]
-    
-    
-    
-    # FIND ALL PEEKS
-    peekStack = []
-    peekCutOffTop = 0
-    peekCutOffBottom = 0
-    peekStackTop, peekCutOffTop = searchTopPeeks()
-    peekStackBottom, peekCutOffTop = searchBottomPeeks()
-    peekStack = peekStackTop + peekStackBottom
-    def sortFun(element):
-        return element[1]
-    peekStack.sort(key=sortFun)
-
-
-
-    
-    # PEEK AVERAGE
-    peekAvrg = 0
-    for i in range(len(peekStack)-1):
-        peekAvrg = peekAvrg + abs(peekStack[i][0])
-    peekAvrg = peekAvrg / (len(peekStack))
-    midZeroLevel = (zeroLevel + dcCurent) /2
-
-    # PARSING TO GRAPH
-    for i in range(len(peekStack)):
-        y_peek.append(peekStack[i][0])
-        x_peek.append(peekStack[i][1])
-
-
-    # TODO simplify math exp
-    # PHASE SHIFT
-    phaseLengthAvrg = 0
-    for xPeekValIndex in range(1, len(x_peek)):
-        phaseLengthAvrg = phaseLengthAvrg + x_peek[xPeekValIndex] - x_peek[xPeekValIndex-1]
-    phaseLengthAvrg = phaseLengthAvrg / (len(x_peek) -1) 
-    phaseLengthAvrg = phaseLengthAvrg *2  
-
-    # min 2 points in x_peek
-    phaseShift = x_peek[0]/phaseLengthAvrg
-    if y_peek[0] < zeroLevel:
-        phaseShift = phaseShift + 0.5
-    phaseShift = phaseShift %1
-
-    return dcCurent
+# INIT
+setBoilerState(curentBoilerState)
