@@ -41,13 +41,13 @@ def writeGPIO(portID, value):
 
 def parseValuesInList(valList):
     ret = []
-        for j in range(len(valList)):
-            num = (valList[j][0] << 8) | valList[j][1]
-            shiftedNum = num >> 4
-            signNum = shiftedNum
-            if (signNum > 0x07FF):
-                signNum = signNum - 0x1000
-            ret.append(signNum)
+    for j in range(len(valList)):
+        num = (valList[j][0] << 8) | valList[j][1]
+        shiftedNum = num >> 4
+        signNum = shiftedNum
+        if (signNum > 0x07FF):
+            signNum = signNum - 0x1000
+        ret.append(signNum)
     return ret
 
 """ 
