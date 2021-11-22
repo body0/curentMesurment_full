@@ -38,8 +38,8 @@ def mesureAndPublish():
             client.publish(getCurentTopic(phaseId+1), val)
         for val in [i]["voltage"]:
             client.publish(getVoltageTopic(phaseId), val)
-
+    client.publish("/new_mesurment", "")
 
 while True:
     mesureAndPublish()
-    time.sleep(5)
+    time.sleep(15)

@@ -106,7 +106,7 @@ def mesure():
     
         
     print('END mesurment')
-    return phases
+    return phaseList
 
 # INIT
 setBoilerState(curentBoilerState)
