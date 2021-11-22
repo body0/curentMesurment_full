@@ -59,7 +59,7 @@ https://www.ti.com/lit/ds/symlink/ads1015.pdf?ts=1637486256575&ref_url=https%253
 
  """    
 
-def mesurePhase(addr_A, addr_B)
+def mesurePhase(addr_A, addr_B):
     curent_chA = [None] * SAMPLE_COUNT
     curent_chB = [None] * SAMPLE_COUNT
     voltage = [None] * SAMPLE_COUNT
