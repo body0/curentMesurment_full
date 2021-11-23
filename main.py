@@ -28,6 +28,14 @@ def boilerGet():
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow():
+    return json.dumps({
+        "phase_EA": 0,
+        "phase_EB": 0,
+        "phase_EC": 0,
+        "phase_HA": 0,
+        "phase_HB": 0,
+        "phase_HC": 0,
+    })
     rawMersument = devIO.mesure()
     scaledMesurment = powerAnalisis.scaleValues(rawMersument)
     solarPower = powerAnalisis.run(scaledMesurment, 1)

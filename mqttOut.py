@@ -32,12 +32,14 @@ def getVoltageTopic(id=0):
 def mesureAndPublish():
     phaseList = ioControl.mesure()
     for phaseId in range(len(phaseList)):
-        for val in phaseList[phaseId]["curent_chA"]:
+        """ for val in phaseList[phaseId]["curent_chA"]:
             client.publish(getCurentTopic(phaseId), val)
         for val in phaseList[phaseId]["curent_chB"]:
             client.publish(getCurentTopic(phaseId+1), val)
         for val in phaseList[phaseId]["voltage"]:
-            client.publish(getVoltageTopic(phaseId), val)
+            client.publish(getVoltageTopic(phaseId), val) """
+        for sampleId in range(phaseList[i]["sCount"]):
+            client.publish(f"/phase/{phaseId}", f"{phaseList[phaseId]["curent_chA"][sampleId]},{phaseList[phaseId]["curent_chB"][sampleId]},{phaseList[phaseId]["voltage"][sampleId]}")
     client.publish("/new_mesurment", "")
 
 while True:
