@@ -1,7 +1,7 @@
 from smbus2 import SMBus, i2c_msg
 import time
 import os.path
-import logger
+# import logger
 
 BOILER_GPIO_ID = 17
 SAMPLE_COUNT = 80
@@ -16,7 +16,7 @@ def getBoilerState():
 
 def setBoilerState(targetState):
     global curentBoilerState
-    logger.log(f'boiler set to: {targetState}')
+    # logger.log(f'boiler set to: {targetState}')
     writeGPIO(BOILER_GPIO_ID, not targetState)
     curentBoilerState = targetState
 
