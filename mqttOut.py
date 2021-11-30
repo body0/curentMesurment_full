@@ -38,7 +38,7 @@ def mesureAndPublish():
             client.publish(getCurentTopic(phaseId+1), val)
         for val in phaseList[phaseId]["voltage"]:
             client.publish(getVoltageTopic(phaseId), val) """
-        for sampleId in range(phaseList[i]["sCount"]):
+        for sampleId in range(phaseList[phaseId]["sCount"]):
             client.publish(f"/phase/{phaseId}", f"{phaseList[phaseId]['curent_chA'][sampleId]},{phaseList[phaseId]['curent_chB'][sampleId]},{phaseList[phaseId]['voltage'][sampleId]}")
     client.publish("/new_mesurment", "")
 
