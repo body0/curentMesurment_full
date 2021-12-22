@@ -42,11 +42,12 @@ typedef struct {
 void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d\n", phId, SAMPLE_COUNT);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
-        printf("%d|%d|%d\n", ((int)phaseList.cIn[sampleId * 2])
-                  << 8, (int)phaseList.cIn[sampleId * 2], (int)phaseList.cIn[sampleId * 2 +1]);
-        int cIn = ((int)phaseList.cIn[sampleId * 2])
-                  << 8 + (int)phaseList.cIn[sampleId * 2 + 1];
-         printf("%d\n", cIn);
+        printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) << 8,
+               (unsigned int)phaseList.cIn[sampleId * 2],
+               (unsigned int)phaseList.cIn[sampleId * 2 + 1]);
+        unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
+                  (unsigned int)phaseList.cIn[sampleId * 2 + 1];
+        printf("%u\n", cIn);
         int cOut = ((int)phaseList.cOut[sampleId * 2])
                    << 8 + (int)phaseList.cOut[sampleId * 2 + 1];
         int v = ((int)phaseList.v[sampleId * 2])
@@ -78,9 +79,12 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
-    unsigned char* rec_cIn = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    unsigned char* rec_cOut = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    unsigned char* rec_v = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_cIn =
+        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_cOut =
+        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_v =
+        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
     PhData ret = {rec_cIn, rec_cOut, rec_v};
     readIO(env, ADDR_CA, ADDR_CB, ret);
     return ret;
@@ -121,7 +125,6 @@ int runIO(Common env) {
 
     return 0;
 }
-
 
 int main(int argc, char const* argv[]) {
     Common env;
