@@ -87,11 +87,11 @@ int runIO(Common env) {
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
         write(env.vBus, READ_REG, 1) < 0 ||
-        read(env.vBus, nullBuff, 2) != 2 ||
+        read(env.vBus, nullBuff, 2) != 2 /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
         write(env.cBus, READ_REG, 1) < 0 ||
-        read(env.cBus, nullBuff, 2) != 2 /* ||
+        read(env.cBus, nullBuff, 2) != 2 */ /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
         write(env.cBus, READ_REG, 1) < 0 ||
