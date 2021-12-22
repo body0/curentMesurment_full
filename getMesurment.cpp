@@ -43,7 +43,7 @@ typedef struct {
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, phaseList.startTime, phaseList.endTime);
+    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, *phaseList.startTime, *phaseList.endTime);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         /* printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) <<
            8, (unsigned int)phaseList.cIn[sampleId * 2], (unsigned
