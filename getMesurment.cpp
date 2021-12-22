@@ -16,7 +16,7 @@
 #define ADDR_V 0x48
 
 #define I2C_FILE_C "/dev/i2c-1"
-#define I2C_FILE_V "/dev/i2c-1"
+#define I2C_FILE_V "/dev/i2c-0"
 #define OUT_FILE "/tmp/phase"
 
 const char VOLTAGE_CONFIG[] = {0x00, 0xA0};
@@ -79,9 +79,9 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
 
 int runIO(Common env) {
     char nullBuff[2];
-    if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
+    if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0/*  ||
         write(env.vBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.vBus, nullBuff, 2) /* ||
+        read(env.vBus, nullBuff, 2) */ /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
         read(env.cBus, nullBuff, 2) ||
