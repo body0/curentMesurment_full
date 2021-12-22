@@ -87,21 +87,16 @@ int runIO(Common env) {
     char nullBuff[2] = {0};
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
-        write(env.vBus, READ_CONF, 1) < 0 ||
-        read(env.vBus, nullBuff, 2) != 2 /* ||
+        write(env.vBus, READ_CONF, 1) < 0 || read(env.vBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_CONF, 1) < 0 ||
-        read(env.cBus, nullBuff, 2) != 2 */ /* ||
+        write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_CONF, 1) < 0 ||
-        read(env.cBus, nullBuff, 2) != 2 ||
+        write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_CONF, 1) < 0 ||
-        read(env.cBus, nullBuff, 2) != 2 */
-    ) {
+        write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
     return 0;
