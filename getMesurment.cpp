@@ -120,7 +120,8 @@ void wrapIO() {
     env.vBus = open(I2C_FILE_V, O_RDWR);
     env.outDesc = fopen(OUT_FILE, "w");
 
-    runIO(env);
+    int retCode = runIO(env);
+    printf("End with %d\n", retCode);
 
     close(env.cBus);
     close(env.vBus);
