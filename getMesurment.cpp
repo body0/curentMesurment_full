@@ -50,14 +50,6 @@ void outputVal(Common env, int phId, PhData phaseList) {
     }
 }
 
-PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
-    char* rec_cIn = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    char* rec_cOut = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    char* rec_v = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    PhData ret = {rec_cIn, rec_cOut, rec_v};
-    readIO(env, ADDR_CA, ADDR_CB, ret);
-    return ret;
-}
 void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
     ioctl(env.cBus, I2C_SLAVE, addrA);
     write(env.cBus, CURENT_CONFIG_01, 2);
@@ -74,6 +66,15 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
         ioctl(env.cBus, I2C_SLAVE, addrB);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
     }
+}
+
+PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
+    char* rec_cIn = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    char* rec_cOut = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    char* rec_v = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    PhData ret = {rec_cIn, rec_cOut, rec_v};
+    readIO(env, ADDR_CA, ADDR_CB, ret);
+    return ret;
 }
 
 int runIO(Common env) {
