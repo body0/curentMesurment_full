@@ -34,9 +34,9 @@ typedef struct {
 } Common;
 
 typedef struct {
-    char* cIn;
-    char* cOut;
-    char* v;
+    unsigned char* cIn;
+    unsigned char* cOut;
+    unsigned char* v;
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
@@ -78,9 +78,9 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
-    char* rec_cIn = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    char* rec_cOut = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
-    char* rec_v = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_cIn = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_cOut = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    unsigned char* rec_v = (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
     PhData ret = {rec_cIn, rec_cOut, rec_v};
     readIO(env, ADDR_CA, ADDR_CB, ret);
     return ret;
