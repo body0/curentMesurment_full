@@ -18,13 +18,14 @@
 #define I2C_FILE_C "/dev/i2c-1"
 #define I2C_FILE_V "/dev/i2c-0"
 #define OUT_FILE "/tmp/phase"
-#define CONFIG_REG '\x01'
-#define READ_REG '\x00'
+#define CONFIG_REG 0x01
+#define READ_REG 0x00
 
 const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
 const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
 const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
 const char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
+const char READ_CONF[] = {READ_REG};
 
 typedef struct {
     FILE* outDesc;
@@ -86,19 +87,19 @@ int runIO(Common env) {
     char nullBuff[2] = {0};
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
-        write(env.vBus, READ_REG, 1) < 0 ||
+        write(env.vBus, READ_CONF, 1) < 0 ||
         read(env.vBus, nullBuff, 2) != 2 /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_REG, 1) < 0 ||
+        write(env.cBus, READ_CONF, 1) < 0 ||
         read(env.cBus, nullBuff, 2) != 2 */ /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_REG, 1) < 0 ||
+        write(env.cBus, READ_CONF, 1) < 0 ||
         read(env.cBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
-        write(env.cBus, READ_REG, 1) < 0 ||
+        write(env.cBus, READ_CONF, 1) < 0 ||
         read(env.cBus, nullBuff, 2) != 2 */
     ) {
         return -1;
