@@ -80,14 +80,11 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
 }
 
 int runIO(Common env) {
-    char nullBuff[10] = {0};
+    char nullBuff[2] = {0};
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
-    write(env.vBus, "\x01\x00\xA0", 3) < 0 ||
-    write(env.vBus, "\x00", 1) < 0 || 
-     read(env.vBus, nullBuff, 2) != 2/* 
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
-        write(env.vBus, READ_REG, 1) < 0 *//*  ||
-        read(env.vBus, nullBuff, 2)  *//* ||
+        write(env.vBus, READ_REG, 1) < 0 ||
+        read(env.vBus, nullBuff, 2) != 2 /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
         read(env.cBus, nullBuff, 2) ||
