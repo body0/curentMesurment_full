@@ -21,13 +21,16 @@ def loadData():
                 while phaseId+1 > len(phaseList):
                     phaseList.append([])
                 curentPhase = phaseId
-            elif line[0] == '=':
-                splitDataPoint = line[1:].split(',')
                 phaseList[curentPhase].append({
-                    "curent_chA": int(splitDataPoint[0]),
-                    "curent_chB": int(splitDataPoint[1]),
-                    "voltage": int(splitDataPoint[2]),
+                    "curent_chA": [],
+                    "curent_chB": [],
+                    "voltage": [],
                     "sTime": 0,
                     "eTime": 0,
                 })
+            elif line[0] == '=':
+                splitDataPoint = line[1:].split(',')
+                phaseList[curentPhase]["curent_chA"].append(int(splitDataPoint[0]))
+                phaseList[curentPhase]["curent_chB"].append(int(splitDataPoint[1]))
+                phaseList[curentPhase]["voltage"].append(int(splitDataPoint[2]))
     return phaseList
