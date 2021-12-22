@@ -72,14 +72,14 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
     struct timeval end;
     gettimeofday(&start, NULL);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
-        // read in
+        /* // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+        read(env.cBus, &(ret.cOut[sampleId * 2]), 2); */
         // read voltage
         write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
