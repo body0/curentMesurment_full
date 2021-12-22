@@ -1,120 +1,132 @@
-// Uses the Linux I2C API to send and receive data from a Jrk G2.
-// NOTE: The Jrk's input mode must be "Serial / I2C / USB".
-// NOTE: For reliable operation on a Raspberry Pi, enable the i2c-gpio
-//   overlay and use the I2C device it provides (usually /dev/i2c-3).
-// NOTE: You might need to change the 'const char * device' line below
-//   to specify the correct I2C device.
-// NOTE: You might need to change the `const uint8_t address' line below
-// to match the device number of your Jrk.
-
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
-#include <linux/i2c.h>
-#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-// Opens the specified I2C device.  Returns a non-negative file descriptor
-// on success, or -1 on failure.
-int open_i2c_device(const char* device) {
-    int fd = open(device, O_RDWR);
-    if (fd == -1) {
-        perror(device);
-        return -1;
+#include <iostream>
+#include <sstream>
+
+#define SAMPLE_COUNT 300
+#define ADDR_CA 0x4b
+#define ADDR_CB 0x49
+#define ADDR_CC 0x48
+#define ADDR_V 0x48
+
+#define I2C_FILE_C "/dev/i2c-1"
+#define I2C_FILE_V "/dev/i2c-1"
+#define OUT_FILE "/tmp/phase"
+
+const char VOLTAGE_CONFIG[] = {0x00, 0xA0};
+const char CURENT_CONFIG_01[] = {0x08, 0xE3};
+const char CURENT_CONFIG_23[] = {0x38, 0xE3};
+const char NULL_CONFIG[] = {0x1, 0x83};
+
+typedef struct {
+    FILE* outDesc;
+    int cBus;
+    int vBus;
+} Common;
+
+typedef struct {
+    char* cIn;
+    char* cOut;
+    char* v;
+} PhData;
+
+void outputVal(Common env, int phId, PhData phaseList) {
+    fprintf(env.outDesc, ">%d", phId);
+    for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
+        int cIn = ((int)phaseList.cIn[sampleId * 2])
+                  << 8 + (int)phaseList.cIn[sampleId * 2 + 1];
+        int cOut = ((int)phaseList.cOut[sampleId * 2])
+                   << 8 + (int)phaseList.cOut[sampleId * 2 + 1];
+        int v = ((int)phaseList.v[sampleId * 2])
+                << 8 + (int)phaseList.v[sampleId * 2 + 1];
+
+        fprintf(env.outDesc, "=%d,%d,%d", cIn, cOut, v);
     }
-    return fd;
 }
 
-// Sets the target, returning 0 on success and -1 on failure.
-//
-// For more information about what this command does, see the "Set Target"
-// command in the "Command reference" section of the Jrk G2 user's guide.
-int jrk_set_target(int fd, uint8_t address, uint16_t target) {
-    uint8_t command[] = {
-        (uint8_t)(0xC0 + (target & 0x1F)),
-        (uint8_t)((target >> 5) & 0x7F),
-    };
-    struct i2c_msg message = {address, 0, sizeof(command), command};
-    struct i2c_rdwr_ioctl_data ioctl_data = {&message, 1};
-    int result = ioctl(fd, I2C_RDWR, &ioctl_data);
-    if (result != 1) {
-        perror("failed to set target");
+PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
+    char* rec_cIn = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    char* rec_cOut = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    char* rec_v = (char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+    PhData ret = {rec_cIn, rec_cOut, rec_v};
+    readIO(env, ADDR_CA, ADDR_CB, ret);
+    return ret;
+}
+void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
+    ioctl(env.cBus, I2C_SLAVE, addrA);
+    write(env.cBus, CURENT_CONFIG_01, 2);
+    ioctl(env.cBus, I2C_SLAVE, addrB);
+    write(env.cBus, CURENT_CONFIG_23, 2);
+
+    for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
+        // read in
+        ioctl(env.cBus, I2C_SLAVE, addrA);
+        read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+        // read voltage
+        read(env.vBus, &(ret.v[sampleId * 2]), 2);
+        // read out
+        ioctl(env.cBus, I2C_SLAVE, addrB);
+        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+    }
+}
+
+int runIO(Common env) {
+    char nullBuff[2];
+    if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
+        write(env.vBus, CURENT_CONFIG_01, 2) < 0 ||
+        read(env.vBus, nullBuff, 2) ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
+        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
+        read(env.cBus, nullBuff, 2) ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
+        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
+        read(env.cBus, nullBuff, 2) ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
+        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
+        read(env.cBus, nullBuff, 2)) {
         return -1;
     }
+
+    PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
+    PhData ph2 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
+    PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC);
+    outputVal(env, 0, ph1);
+    outputVal(env, 1, ph2);
+    outputVal(env, 2, ph3);
+
+    if (write(env.vBus, NULL_CONFIG, 2) < 0 ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
+        write(env.cBus, NULL_CONFIG, 2) < 0 ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
+        write(env.cBus, NULL_CONFIG, 2) < 0 ||
+        ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
+        write(env.cBus, NULL_CONFIG, 2) < 0) {
+        return -1;
+    }
+
     return 0;
 }
 
-// Gets one or more variables from the Jrk (without clearing them).
-// Returns 0 for success, -1 for failure.
-int jrk_get_variable(int fd, uint8_t address, uint8_t offset, uint8_t* buffer,
-                     uint8_t length) {
-    uint8_t command[] = {0xE5, offset};
-    struct i2c_msg messages[] = {
-        {address, 0, sizeof(command), command},
-        {address, I2C_M_RD, length, buffer},
-    };
-    struct i2c_rdwr_ioctl_data ioctl_data = {messages, 2};
-    int result = ioctl(fd, I2C_RDWR, &ioctl_data);
-    if (result != 2) {
-        perror("failed to get variables");
-        return -1;
-    }
-    return 0;
+void wrapIO() {
+    Common env;
+    env.cBus = open(I2C_FILE_C, O_RDWR);
+    env.vBus = open(I2C_FILE_V, O_RDWR);
+    env.outDesc = fopen(OUT_FILE, "w");
+
+    runIO(env);
+
+    close(env.cBus);
+    close(env.vBus);
+    fclose(env.outDesc);
 }
 
-// Gets the Target variable from the jrk or returns -1 on failure.
-int jrk_get_target(int fd, uint8_t address) {
-    uint8_t buffer[2];
-    int result = jrk_get_variable(fd, address, 0x02, buffer, sizeof(buffer));
-    if (result) {
-        return -1;
-    }
-    return buffer[0] + 256 * buffer[1];
-}
-
-// Gets the Feedback variable from the jrk or returns -1 on failure.
-int jrk_get_feedback(int fd, uint8_t address) {
-    // 0x04 is the offset of the feedback variable in the "Variable reference"
-    // section of the Jrk user's guide.  The variable is two bytes long.
-    uint8_t buffer[2];
-    int result = jrk_get_variable(fd, address, 0x04, buffer, sizeof(buffer));
-    if (result) {
-        return -1;
-    }
-    return buffer[0] + 256 * buffer[1];
-}
-int main() {
-    // Choose the I2C device.
-    const char* device = "/dev/i2c-3";
-
-    // Set the I2C address of the Jrk (the device number).
-    const uint8_t address = 11;
-
-    int fd = open_i2c_device(device);
-    if (fd < 0) {
-        return 1;
-    }
-
-    int feedback = jrk_get_feedback(fd, address);
-    if (feedback < 0) {
-        return 1;
-    }
-    printf("Feedback is %d.\n", feedback);
-
-    int target = jrk_get_target(fd, address);
-    if (target < 0) {
-        return 1;
-    }
-    printf("Target is %d.\n", target);
-
-    int new_target = (target < 2048) ? 2248 : 1848;
-    printf("Setting target to %d.\n", new_target);
-    int result = jrk_set_target(fd, address, new_target);
-    if (result) {
-        return 1;
-    }
-
-    close(fd);
+int main(int argc, char const* argv[]) {
+    wrapIO();
     return 0;
 }
