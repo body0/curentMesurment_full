@@ -10,7 +10,7 @@ def getPhaseList():
 
 def loadData():
     phaseList = []
-    with open('/tmp/phase', 'w') as f:
+    with open('/tmp/phase', 'r') as f:
         while True:
             line = f.readline()
             if len(line) == 0: 
