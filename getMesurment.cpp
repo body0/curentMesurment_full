@@ -9,7 +9,7 @@
 #include <iostream>
 #include <sstream>
 
-#define SAMPLE_COUNT 300
+#define SAMPLE_COUNT 1
 #define ADDR_CA 0x4b
 #define ADDR_CB 0x49
 #define ADDR_CC 0x48
@@ -42,8 +42,11 @@ typedef struct {
 void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d\n", phId, SAMPLE_COUNT);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
+        printf("%d|%d|%d\n", ((int)phaseList.cIn[sampleId * 2])
+                  << 8, (int)phaseList.cIn[sampleId * 2], (int)phaseList.cIn[sampleId * 2 +1]);
         int cIn = ((int)phaseList.cIn[sampleId * 2])
                   << 8 + (int)phaseList.cIn[sampleId * 2 + 1];
+         printf("%d\n", cIn);
         int cOut = ((int)phaseList.cOut[sampleId * 2])
                    << 8 + (int)phaseList.cOut[sampleId * 2 + 1];
         int v = ((int)phaseList.v[sampleId * 2])
