@@ -88,11 +88,10 @@ def mesure():
     phaseList = [None,None,None]
 
     voltBus.write_i2c_block_data(0x48, 1, VOLTAGE_CONFIG)
-    phaseList[0]= mesurePhase(0x4b, 0x49)
-    phaseList[1]= mesurePhase(0x48, 0x4b)
+    phaseList[1]= mesurePhase(0x4b, 0x49) # SWITCHED!!
+    phaseList[0]= mesurePhase(0x48, 0x4b) # SWITCHED!!
     phaseList[2]= mesurePhase(0x49, 0x48)
 
-    voltBus.write_i2c_block_data(0x48, 1, NULL_CONFIG)
     curBus.write_i2c_block_data(0x48, 1, NULL_CONFIG)
     curBus.write_i2c_block_data(0x49, 1, NULL_CONFIG)
     curBus.write_i2c_block_data(0x4b, 1, NULL_CONFIG)
