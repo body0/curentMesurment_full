@@ -38,8 +38,8 @@ typedef struct {
     unsigned char* cIn;
     unsigned char* cOut;
     unsigned char* v;
-    long long int startTime;
-    long long int endTime;
+    long long int* startTime;
+    long long int* endTime;
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
@@ -84,10 +84,9 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
     }
     gettimeofday(&end, NULL);
-    ret.startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
-    ret.endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
-    printf("T: %lld,%lld\n", ret.startTime, ret.endTime);
-
+    *ret.startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
+    *ret.endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
+    // printf("T: %lld,%lld\n", ret.startTime, ret.endTime);
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
