@@ -17,7 +17,8 @@ def loadData():
             if len(line) == 0: 
                 break
             if line[0] == '>':
-                phaseId = int(line[1])
+                splitParam = line[1:].split(',')
+                phaseId = int(splitParam[0])
                 while phaseId+1 > len(phaseList):
                     phaseList.append({
                         "curent_chA": [],
@@ -25,6 +26,7 @@ def loadData():
                         "voltage": [],
                         "sTime": 0,
                         "eTime": 0,
+                        "sCount": int(splitParam[1])
                     })
                 curentPhase = phaseId
                 

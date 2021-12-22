@@ -106,6 +106,7 @@ def mesureAllPhase():
         phaseList[i]["curent_chA"] = preProcesPhase(phaseList[i]["curent_chA"])
         phaseList[i]["curent_chB"] = preProcesPhase(phaseList[i]["curent_chB"])
         phaseList[i]["voltage"] = preProcesPhase(phaseList[i]["voltage"])
+        phaseList[i]["sCount"] = SAMPLE_COUNT
     
     return phaseList
 
@@ -119,7 +120,6 @@ def mesure():
         phaseList[i]["curent_chB"] = parseValuesInList(phaseList[i]["curent_chB"])
         phaseList[i]["voltage"] = parseValuesInList(phaseList[i]["voltage"])
         phaseList[i]["diffTime"] = phaseList[i]["eTime"] - phaseList[i]["sTime"]
-        phaseList[i]["sCount"] = SAMPLE_COUNT
 
     print(f"# EXEC TIME: {phaseList[0]['diffTime']}; {phaseList[1]['diffTime']}; {phaseList[2]['diffTime']}")
     
