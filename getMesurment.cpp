@@ -62,14 +62,14 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
-        write(env.cBus, READ_REG, 1);
+        write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         // read voltage
-        write(env.vBus, READ_REG, 1);
+        write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
-        write(env.cBus, READ_REG, 1);
+        write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
     }
 }
@@ -99,7 +99,6 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
-    return 0;
     PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph2 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC);
