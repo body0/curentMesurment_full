@@ -81,7 +81,7 @@ int runIO(Common env) {
     char nullBuff[2];
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.vBus, nullBuff, 2) ||
+        read(env.vBus, nullBuff, 2) /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
         read(env.cBus, nullBuff, 2) ||
@@ -90,10 +90,11 @@ int runIO(Common env) {
         read(env.cBus, nullBuff, 2) ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
         write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.cBus, nullBuff, 2)) {
+        read(env.cBus, nullBuff, 2) */
+        ) {
         return -1;
     }
-
+    return 0;
     PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph2 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC);
