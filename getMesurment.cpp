@@ -35,9 +35,9 @@ typedef struct {
 } Common;
 
 typedef struct {
-    unsigned char* cIn;
-    unsigned char* cOut;
-    unsigned char* v;
+    unsigned char* const cIn;
+    unsigned char* const cOut;
+    unsigned char* const v;
     long long int startTime;
     long long int endTime;
 } PhData;
