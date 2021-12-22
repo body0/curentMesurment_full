@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include <iostream>
@@ -37,10 +38,12 @@ typedef struct {
     unsigned char* cIn;
     unsigned char* cOut;
     unsigned char* v;
+    long long int startTime;
+    long long int endTime;
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d,%d\n", phId, SAMPLE_COUNT);
+    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, phaseList.startTime, phaseList.endTime);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         /* printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) <<
            8, (unsigned int)phaseList.cIn[sampleId * 2], (unsigned
@@ -64,19 +67,25 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
     ioctl(env.cBus, I2C_SLAVE, addrB);
     write(env.cBus, CURENT_CONFIG_23, 3);
 
+    struct timeval start;
+    struct timeval end;
+    gettimeofday(&start, NULL);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
-        // read voltage
-        write(env.vBus, READ_CONF, 1);
-        read(env.vBus, &(ret.v[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+        // read voltage
+        write(env.vBus, READ_CONF, 1);
+        read(env.vBus, &(ret.v[sampleId * 2]), 2);
     }
+    gettimeofday(&end, NULL);
+    ret.startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
+    ret.endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
@@ -89,6 +98,11 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
     PhData ret = {rec_cIn, rec_cOut, rec_v};
     readIO(env, ADDR_CA, ADDR_CB, ret);
     return ret;
+}
+void beFree(PhData data) {
+    free(data.cIn);
+    free(data.cOut);
+    free(data.v);
 }
 
 int runIO(Common env) {
@@ -113,6 +127,9 @@ int runIO(Common env) {
     outputVal(env, 0, ph1);
     outputVal(env, 1, ph2);
     outputVal(env, 2, ph3);
+    beFree(ph1);
+    beFree(ph2);
+    beFree(ph3);
 
     if (write(env.vBus, NULL_CONFIG, 3) < 0 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||

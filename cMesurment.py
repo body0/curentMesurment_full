@@ -24,8 +24,8 @@ def loadData():
                         "curent_chA": [],
                         "curent_chB": [],
                         "voltage": [],
-                        "sTime": 0,
-                        "eTime": 0,
+                        "sTime": int(splitParam[2]),
+                        "eTime": int(splitParam[3]),
                         "sCount": int(splitParam[1])
                     })
                 curentPhase = phaseId
