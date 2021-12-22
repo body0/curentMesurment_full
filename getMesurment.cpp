@@ -49,7 +49,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
         int v = ((int)phaseList.v[sampleId * 2])
                 << 8 + (int)phaseList.v[sampleId * 2 + 1];
 
-        fprintf(env.outDesc, "=%d,%d,%d\n", cIn, cOut, v);
+        fprintf(env.outDesc, "=%u,%u,%u\n", cIn, cOut, v);
     }
 }
 
