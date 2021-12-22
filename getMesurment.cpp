@@ -99,8 +99,8 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
-    PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
-    PhData ph2 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
+    PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
+    PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC);
     outputVal(env, 0, ph1);
     outputVal(env, 1, ph2);
@@ -119,7 +119,8 @@ int runIO(Common env) {
     return 0;
 }
 
-void wrapIO() {
+
+int main(int argc, char const* argv[]) {
     Common env;
     env.cBus = open(I2C_FILE_C, O_RDWR);
     env.vBus = open(I2C_FILE_V, O_RDWR);
@@ -131,9 +132,6 @@ void wrapIO() {
     close(env.cBus);
     close(env.vBus);
     fclose(env.outDesc);
-}
 
-int main(int argc, char const* argv[]) {
-    wrapIO();
-    return 0;
+    return retCode;
 }

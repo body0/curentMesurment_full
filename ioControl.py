@@ -1,6 +1,7 @@
 from smbus2 import SMBus, i2c_msg
 import time
 import os.path
+import cMesurment
 # import logger
 
 BOILER_GPIO_ID = 17
@@ -42,13 +43,19 @@ def writeGPIO(portID, value):
 
 def parseValuesInList(valList):
     ret = []
-    for j in range(len(valList)):
-        num = (valList[j][0] << 8) | valList[j][1]
+    for num in valList:
         shiftedNum = num >> 4
         signNum = shiftedNum
         if (signNum > 0x07FF):
             signNum = signNum - 0x1000
         ret.append(signNum)
+    return ret
+ 
+def preProcesPhase(valList): 
+    ret = []
+    for j in range(len(valList)):
+        num = (valList[j][0] << 8) | valList[j][1]
+        ret.append(num)
     return ret
 
 """ 
@@ -58,7 +65,7 @@ https://www.ti.com/lit/ds/symlink/ads1015.pdf?ts=1637486256575&ref_url=https%253
 48; gnd; B; C
 4b; scl; A; B
 
- """    
+ """   
 
 def mesurePhase(addr_A, addr_B):
     curent_chA = [None] * SAMPLE_COUNT
@@ -83,8 +90,7 @@ def mesurePhase(addr_A, addr_B):
       "eTime": endTime,
     }
 
-def mesure():
-    print('START mesurment')
+def mesureAllPhase():
     phaseList = [None,None,None]
 
     voltBus.write_i2c_block_data(0x48, 1, VOLTAGE_CONFIG)
@@ -95,6 +101,18 @@ def mesure():
     curBus.write_i2c_block_data(0x48, 1, NULL_CONFIG)
     curBus.write_i2c_block_data(0x49, 1, NULL_CONFIG)
     curBus.write_i2c_block_data(0x4b, 1, NULL_CONFIG)
+    
+    for i in range(len(phaseList)):
+        phaseList[i]["curent_chA"] = preProcesPhase(phaseList[i]["curent_chA"])
+        phaseList[i]["curent_chB"] = preProcesPhase(phaseList[i]["curent_chB"])
+        phaseList[i]["voltage"] = preProcesPhase(phaseList[i]["voltage"])
+    
+    return phaseList
+
+def mesure():
+    print('START mesurment')
+    # phaseList = mesureAllPhase()
+    phaseList = cMesurment.getPhaseList()
     
     for i in range(len(phaseList)):
         phaseList[i]["curent_chA"] = parseValuesInList(phaseList[i]["curent_chA"])
