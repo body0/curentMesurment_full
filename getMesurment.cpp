@@ -42,16 +42,17 @@ typedef struct {
 void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d\n", phId, SAMPLE_COUNT);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
-        printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) << 8,
-               (unsigned int)phaseList.cIn[sampleId * 2],
-               (unsigned int)phaseList.cIn[sampleId * 2 + 1]);
+        /* printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) <<
+           8, (unsigned int)phaseList.cIn[sampleId * 2], (unsigned
+           int)phaseList.cIn[sampleId * 2 + 1]); */
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
-                  (unsigned int)phaseList.cIn[sampleId * 2 + 1];
-        printf("%u\n", cIn);
-        int cOut = ((int)phaseList.cOut[sampleId * 2])
-                   << 8 + (int)phaseList.cOut[sampleId * 2 + 1];
-        int v = ((int)phaseList.v[sampleId * 2])
-                << 8 + (int)phaseList.v[sampleId * 2 + 1];
+                           (unsigned int)phaseList.cIn[sampleId * 2 + 1];
+        // printf("%u\n", cIn);
+        unsigned int cOut =
+            (((unsigned int)phaseList.cOut[sampleId * 2]) << 8) +
+            (unsigned int)phaseList.cOut[sampleId * 2 + 1];
+        unsigned int v = (((unsigned int)phaseList.v[sampleId * 2]) << 8) +
+                         (unsigned int)phaseList.v[sampleId * 2 + 1];
 
         fprintf(env.outDesc, "=%u,%u,%u\n", cIn, cOut, v);
     }
