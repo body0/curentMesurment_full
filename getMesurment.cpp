@@ -54,18 +54,21 @@ void outputVal(Common env, int phId, PhData phaseList) {
 
 void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
     ioctl(env.cBus, I2C_SLAVE, addrA);
-    write(env.cBus, CURENT_CONFIG_01, 2);
+    write(env.cBus, CURENT_CONFIG_01, 3);
     ioctl(env.cBus, I2C_SLAVE, addrB);
-    write(env.cBus, CURENT_CONFIG_23, 2);
+    write(env.cBus, CURENT_CONFIG_23, 3);
 
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
+        write(env.cBus, READ_REG, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         // read voltage
+        write(env.vBus, READ_REG, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
+        write(env.cBus, READ_REG, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
     }
 }
@@ -84,16 +87,19 @@ int runIO(Common env) {
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
         write(env.vBus, READ_REG, 1) < 0 ||
-        read(env.vBus, nullBuff, 2) != 2 /* ||
+        read(env.vBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
-        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.cBus, nullBuff, 2) ||
+        write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
+        write(env.cBus, READ_REG, 1) < 0 ||
+        read(env.cBus, nullBuff, 2) != 2 /* ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
-        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.cBus, nullBuff, 2) ||
+        write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
+        write(env.cBus, READ_REG, 1) < 0 ||
+        read(env.cBus, nullBuff, 2) != 2 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
-        write(env.cBus, CURENT_CONFIG_01, 2) < 0 ||
-        read(env.cBus, nullBuff, 2) */
+        write(env.cBus, CURENT_CONFIG_01, 3) < 0 ||
+        write(env.cBus, READ_REG, 1) < 0 ||
+        read(env.cBus, nullBuff, 2) != 2 */
     ) {
         return -1;
     }
@@ -105,13 +111,13 @@ int runIO(Common env) {
     outputVal(env, 1, ph2);
     outputVal(env, 2, ph3);
 
-    if (write(env.vBus, NULL_CONFIG, 2) < 0 ||
+    if (write(env.vBus, NULL_CONFIG, 3) < 0 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CA) < 0 ||
-        write(env.cBus, NULL_CONFIG, 2) < 0 ||
+        write(env.cBus, NULL_CONFIG, 3) < 0 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CB) < 0 ||
-        write(env.cBus, NULL_CONFIG, 2) < 0 ||
+        write(env.cBus, NULL_CONFIG, 3) < 0 ||
         ioctl(env.cBus, I2C_SLAVE, ADDR_CC) < 0 ||
-        write(env.cBus, NULL_CONFIG, 2) < 0) {
+        write(env.cBus, NULL_CONFIG, 3) < 0) {
         return -1;
     }
 
