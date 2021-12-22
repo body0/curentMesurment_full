@@ -10,6 +10,7 @@ def getPhaseList():
 
 def loadData():
     phaseList = []
+    curentPhase = 0
     with open('/tmp/phase', 'r') as f:
         while True:
             line = f.readline()
@@ -19,13 +20,14 @@ def loadData():
                 phaseId = int(line[1])
                 while phaseId+1 > len(phaseList):
                     phaseList.append([])
+                curentPhase = phaseId
             elif line[0] == '=':
                 splitDataPoint = line[1:].split(',')
-                return {
+                phaseList[curentPhase].append({
                     "curent_chA": int(splitDataPoint[0]),
                     "curent_chB": int(splitDataPoint[1]),
                     "voltage": int(splitDataPoint[2]),
                     "sTime": 0,
                     "eTime": 0,
-                }
+                })
     return phaseList
