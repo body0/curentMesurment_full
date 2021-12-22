@@ -38,12 +38,12 @@ typedef struct {
     unsigned char* cIn;
     unsigned char* cOut;
     unsigned char* v;
-    long long int* startTime;
-    long long int* endTime;
+    long long int startTime;
+    long long int endTime;
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, *phaseList.startTime, *phaseList.endTime);
+    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, phaseList.startTime, phaseList.endTime);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         /* printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) <<
            8, (unsigned int)phaseList.cIn[sampleId * 2], (unsigned
@@ -61,7 +61,8 @@ void outputVal(Common env, int phId, PhData phaseList) {
     }
 }
 
-void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
+void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef) {
+    PhData ret = *retRef;
     ioctl(env.cBus, I2C_SLAVE, addrA);
     write(env.cBus, CURENT_CONFIG_01, 3);
     ioctl(env.cBus, I2C_SLAVE, addrB);
@@ -84,8 +85,8 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData ret) {
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
     }
     gettimeofday(&end, NULL);
-    *ret.startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
-    *ret.endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
+    retRef->startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
+    retRef->endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
     // printf("T: %lld,%lld\n", ret.startTime, ret.endTime);
 }
 
@@ -97,7 +98,7 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
     unsigned char* rec_v =
         (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
     PhData ret = {rec_cIn, rec_cOut, rec_v};
-    readIO(env, ADDR_CA, ADDR_CB, ret);
+    readIO(env, ADDR_CA, ADDR_CB, &ret);
     return ret;
 }
 void beFree(PhData data) {
