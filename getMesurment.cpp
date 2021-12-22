@@ -22,11 +22,11 @@
 #define CONFIG_REG 0x01
 #define READ_REG 0x00
 
-const char const VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
-const char const CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
-const char const CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
-const char const NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
-const char const READ_CONF[] = {READ_REG};
+const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
+const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
+const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
+const char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
+const char READ_CONF[] = {READ_REG};
 
 typedef struct {
     FILE* outDesc;
