@@ -22,11 +22,11 @@
 #define CONFIG_REG 0x01
 #define READ_REG 0x00
 
-const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
-const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
-const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
-const char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
-const char READ_CONF[] = {READ_REG};
+const char const VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
+const char const CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
+const char const CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
+const char const NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
+const char const READ_CONF[] = {READ_REG};
 
 typedef struct {
     FILE* outDesc;
@@ -72,14 +72,14 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
     struct timeval end;
     gettimeofday(&start, NULL);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
-        /* // read in
+        // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cOut[sampleId * 2]), 2); */
+        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         // read voltage
         write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
