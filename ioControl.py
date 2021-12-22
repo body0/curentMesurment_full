@@ -6,7 +6,7 @@ import cMesurment
 # import logger
 
 BOILER_GPIO_ID = 17
-SAMPLE_COUNT = 80
+SAMPLE_COUNT = 100
 
 VOLTAGE_CONFIG = [0x00, 0xA0]
 #VOLTAGE_CONFIG = [0x04, 0xA0]
