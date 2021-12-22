@@ -40,7 +40,7 @@ typedef struct {
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d", phId);
+    fprintf(env.outDesc, ">%d\n", phId);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         int cIn = ((int)phaseList.cIn[sampleId * 2])
                   << 8 + (int)phaseList.cIn[sampleId * 2 + 1];
@@ -49,7 +49,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
         int v = ((int)phaseList.v[sampleId * 2])
                 << 8 + (int)phaseList.v[sampleId * 2 + 1];
 
-        fprintf(env.outDesc, "=%d,%d,%d", cIn, cOut, v);
+        fprintf(env.outDesc, "=%d,%d,%d\n", cIn, cOut, v);
     }
 }
 
