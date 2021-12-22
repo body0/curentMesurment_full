@@ -1,6 +1,7 @@
 from smbus2 import SMBus, i2c_msg
 import time
 import os.path
+import math
 import cMesurment
 # import logger
 
@@ -76,12 +77,12 @@ def mesurePhase(addr_A, addr_B):
     curBus.write_i2c_block_data(addr_A, 1, CURENT_CONFIG_01)
     curBus.write_i2c_block_data(addr_B, 1, CURENT_CONFIG_23)
     time.sleep(0.005)
-    startTime = time.time()
+    startTime = math.floor(time.time() * 1000)
     for i in range(SAMPLE_COUNT):
         curent_chA[i] = curBus.read_i2c_block_data(addr_A, 0, 2)
         curent_chB[i] = curBus.read_i2c_block_data(addr_B, 0, 2)
         voltage[i] = voltBus.read_i2c_block_data(0x48, 0, 2)
-    endTime = time.time()
+    endTime = math.floor(time.time() * 1000)
     return {
       "curent_chA": curent_chA,
       "curent_chB": curent_chB,
