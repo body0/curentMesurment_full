@@ -31,6 +31,7 @@ def getVoltageTopic(id=0):
 
 def mesureAndPublish():
     phaseList = ioControl.mesure()
+    print(phaseList)
     for phaseId in range(len(phaseList)):
         """ for val in phaseList[phaseId]["curent_chA"]:
             client.publish(getCurentTopic(phaseId), val)
