@@ -112,8 +112,8 @@ def mesureAllPhase():
 
 def mesure():
     print('START mesurment')
-    # phaseList = mesureAllPhase()
-    phaseList = cMesurment.getPhaseList()
+    phaseList = mesureAllPhase()
+    #phaseList = cMesurment.getPhaseList()
     
     for i in range(len(phaseList)):
         phaseList[i]["curent_chA"] = parseValuesInList(phaseList[i]["curent_chA"])
