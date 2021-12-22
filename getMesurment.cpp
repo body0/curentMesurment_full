@@ -18,8 +18,8 @@
 #define I2C_FILE_C "/dev/i2c-1"
 #define I2C_FILE_V "/dev/i2c-0"
 #define OUT_FILE "/tmp/phase"
-#define CONFIG_REG 0x01
-#define READ_REG 0x00
+#define CONFIG_REG '\x01'
+#define READ_REG '\x00'
 
 const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
 const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
