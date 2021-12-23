@@ -98,7 +98,7 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
     unsigned char* rec_v =
         (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
     PhData ret = {rec_cIn, rec_cOut, rec_v};
-    readIO(env, ADDR_CA, ADDR_CB, &ret);
+    readIO(env, addrA, addrB, &ret);
     return ret;
 }
 void beFree(PhData data) {
