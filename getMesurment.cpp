@@ -65,8 +65,10 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
     PhData ret = *retRef;
     ioctl(env.cBus, I2C_SLAVE, addrA);
     write(env.cBus, CURENT_CONFIG_01, 3);
+    write(env.cBus, READ_CONF, 1);
     ioctl(env.cBus, I2C_SLAVE, addrB);
     write(env.cBus, CURENT_CONFIG_23, 3);
+    write(env.cBus, READ_CONF, 1);
 
     struct timeval start;
     struct timeval end;
@@ -74,14 +76,14 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
-        write(env.cBus, READ_CONF, 1);
+        // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
-        write(env.cBus, READ_CONF, 1);
+        // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         // read voltage
-        write(env.vBus, READ_CONF, 1);
+        // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
     }
     gettimeofday(&end, NULL);
