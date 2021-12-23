@@ -21,10 +21,12 @@
 #define OUT_FILE "/tmp/phase"
 #define CONFIG_REG 0x01
 #define READ_REG 0x00
+// #define SPEED_CONFIG 0xA0
+#define SPEED_CONFIG 0x63
 
-const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, 0xA0};
-const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, 0xE3};
-const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, 0xE3};
+const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, SPEED_CONFIG};
+const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, SPEED_CONFIG};
+const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, SPEED_CONFIG};
 const char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
 const char READ_CONF[] = {READ_REG};
 
@@ -78,13 +80,15 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+
+        // read voltage
+        // write(env.vBus, READ_CONF, 1);
+        read(env.vBus, &(ret.v[sampleId * 2]), 2);
+
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
-        // read voltage
-        // write(env.vBus, READ_CONF, 1);
-        read(env.vBus, &(ret.v[sampleId * 2]), 2);
     }
     gettimeofday(&end, NULL);
     retRef->startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
