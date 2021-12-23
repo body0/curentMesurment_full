@@ -87,7 +87,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
     gettimeofday(&end, NULL);
     retRef->startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
     retRef->endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
-    printf("T: %lld\n", retRef->endTime-retRef->startTime);
+    // printf("T: %lld\n", retRef->endTime-retRef->startTime);
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
@@ -153,7 +153,7 @@ int main(int argc, char const* argv[]) {
     env.outDesc = fopen(OUT_FILE, "w");
 
     int retCode = runIO(env);
-    printf("End with %d\n", retCode);
+    // printf("End with %d\n", retCode);
 
     close(env.cBus);
     close(env.vBus);
