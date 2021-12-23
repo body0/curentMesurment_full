@@ -21,8 +21,9 @@
 #define OUT_FILE "/tmp/phase"
 #define CONFIG_REG 0x01
 #define READ_REG 0x00
+// #define SPEED_CONFIG 0x63
+#define SPEED_CONFIG 0x83
 // #define SPEED_CONFIG 0xA0
-#define SPEED_CONFIG 0x63
 
 const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, SPEED_CONFIG};
 const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, SPEED_CONFIG};
