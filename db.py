@@ -23,10 +23,10 @@ def selectTest():
     FROM avrg_pow
     WHERE
     phId = 0
-    ORDER BY 1
     ''')
     conn.commit()
     rows = cur.fetchall()
+    print("DB, test select")
     print(rows)
 
 conn = psycopg2.connect(
