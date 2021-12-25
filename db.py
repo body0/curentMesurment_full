@@ -8,8 +8,8 @@ load_dotenv(dotenv_path=Path('upstream.env'))
 conn = psycopg2.connect(
     host=os.getenv('DB_HOST'),
     port = os.getenv('DB_PORT'),
-    database="apiuser",
-    user="postgres",
+    database="record",
+    user="apiuser",
     password=os.getenv('DB_PASS'))
 print("DB, connected")
 
