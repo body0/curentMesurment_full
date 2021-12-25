@@ -38,12 +38,6 @@ def getSin(x, y):
 
 def getShiftedBatch(batch):
 
-    for phase in batch:
-        for i, val in enumerate(phase):
-            phase[i][0] = val[0] / 0x800 * 4.12
-            phase[i][1] = val[1] / 0x800 * 4.12
-            phase[i][2] = val[2] * 0.0008671875#* 700
-
     """ 
     #batch(Phase list) (len 3):
     [
@@ -109,4 +103,18 @@ def getAvrgPower(shiftedBatch):
             powB.append(val[1] * val[2])
         ret.append([getAvrg(powA), getAvrg(powB)])
     return ret
+
+def scaleBatchToReal(batch):
+    for phase in batch:
+        for i, val in enumerate(phase):
+            phase[i][0] = val[0] / 0x800 * 4.12
+            phase[i][1] = val[1] / 0x800 * 4.12
+            phase[i][2] = val[2] * 0.282069314
+
+def scaleBatch(batch):
+    for phase in batch:
+        for i, val in enumerate(phase):
+            phase[i][0] = val[0] / 0x800 * 4.12
+            phase[i][1] = val[1] / 0x800 * 4.12
+            phase[i][2] = val[2] * 0.0008671875
             
