@@ -15,6 +15,7 @@ print("DB, connected")
 
 def addPowRes(powerList):
     cur = conn.cursor()
+    print(powerList)
     for pPhase in powerList:
         [powA, powB] = powerList[pPhase]
         cur.execute('insert into avrg_pow (phId, powA, powB) values (%s, %s, %s)', [pPhase, powA, powB])
