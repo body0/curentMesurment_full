@@ -8,7 +8,7 @@ def genBatch(phaseList):
     for phaseId in range(len(phaseList)):
         batch.append([])
         ph = phaseList[phaseId]
-        for i in range(phaseList['sCount']):
+        for i in range(ph['sCount']):
             batch[phaseId].append([ph['curent_chA'][i], ph['curent_chB'][i], ph['voltage'][i]])
     return batch
         
