@@ -56,7 +56,7 @@ def getShiftedBatch(batch):
     #PHASE_V_SHIFT = [0, 0, 0]
     PHASE_V_SHIFT = [0.333333333, -0.333333333, 0]
     #PHASE_V_SHIFT = [-0.333333333, 0.333333333, 0]
-    shiftedBatch = []
+    shiftedBatch = [[],[],[]]
     for phaseId, phase in enumerate(batch):
         
         x = []
