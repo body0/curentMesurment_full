@@ -36,4 +36,4 @@ conn = psycopg2.connect(
     user="apiuser",
     password=os.getenv('DB_PASS'))
 print("DB, connected")
-selectTest()
+#selectTest()
