@@ -10,7 +10,7 @@
 #include <iostream>
 #include <sstream>
 
-#define SAMPLE_COUNT 100
+#define SAMPLE_COUNT 300
 #define ADDR_CA 0x4b
 #define ADDR_CB 0x49
 #define ADDR_CC 0x48
