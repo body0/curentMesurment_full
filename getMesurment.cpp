@@ -12,8 +12,8 @@
 
 #define SAMPLE_COUNT 300
 #define ADDR_CA 0x4b
-#define ADDR_CB 0x49
-#define ADDR_CC 0x48
+#define ADDR_CB 0x48
+#define ADDR_CC 0x49
 #define ADDR_V 0x48
 
 #define I2C_FILE_C "/dev/i2c-1"
@@ -130,9 +130,12 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
-    PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
+    /* PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
-    PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC);
+    PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC); */
+    PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
+    PhData ph1 = readIOGen(env, ADDR_CB, ADDR_CC);  // SWITCHED !!
+    PhData ph3 = readIOGen(env, ADDR_CC, ADDR_CA);
     outputVal(env, 0, ph1);
     outputVal(env, 1, ph2);
     outputVal(env, 2, ph3);
