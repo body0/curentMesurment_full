@@ -13,4 +13,4 @@ def mesureAndPublish():
 
 while True:
     mesureAndPublish()
-    time.sleep(30)
+    time.sleep(10)
