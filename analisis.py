@@ -113,6 +113,7 @@ def scaleBatchToReal(batch):
             phase[i][0] = val[0] / 0x800 * 4.12
             phase[i][1] = val[1] / 0x800 * 4.12
             phase[i][2] = val[2] * 0.282069314
+    return batch
 
 def scaleBatch(batch):
     for phase in batch:
@@ -120,4 +121,6 @@ def scaleBatch(batch):
             phase[i][0] = val[0] / 0x800 * 4.12
             phase[i][1] = val[1] / 0x800 * 4.12
             phase[i][2] = val[2] * 0.0008671875
+    return batch
+            
             
