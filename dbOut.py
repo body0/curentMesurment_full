@@ -7,7 +7,8 @@ def mesureAndPublish():
     phaseList = ioControl.mesure()
     batch = analisis.genBatch(phaseList)
     sBatch = analisis.getShiftedBatch(batch)
-    powerList = analisis.getAvrgPower(sBatch)
+    ssBatch = analisis.scaleBatchToReal(sBatch)
+    powerList = analisis.getAvrgPower(ssBatch)
     db.addPowRes(powerList)
         
 
