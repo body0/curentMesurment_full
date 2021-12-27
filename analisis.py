@@ -98,6 +98,10 @@ def getAvrgPower(shiftedBatch):
     for phaseId, phase in enumerate(shiftedBatch):
         powA = []
         powB = []
+        cA = []
+        cB = []
+        v = []
+        print(val)
         for i, val in enumerate(phase):
             powA.append(val[0] * val[2])
             powB.append(val[1] * val[2])
