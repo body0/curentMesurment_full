@@ -110,8 +110,8 @@ def getAvrgPower(shiftedBatch):
         for i, val in enumerate(phase):
             powA.append(val[0] * val[2])
             powB.append(val[1] * val[2])
-            cA = val[0]
-            cB = val[1]
+            cA.append(val[0])
+            cB.append(val[1])
         powA_alt = getAvrgAbs(cA) * 230
         powB_alt = getAvrgAbs(cB) * 230
         ret.append([powA_alt, powB_alt, getAvrg(powA), getAvrg(powB)])
