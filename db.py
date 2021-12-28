@@ -5,12 +5,16 @@ from pathlib import Path
 
 load_dotenv(dotenv_path=Path('upstream.env'))
 
+
 def addPowRes(powerList):
     cur = conn.cursor()
     for pPhaseId in range(len(powerList)):
         powA = powerList[pPhaseId][0]
         powB = powerList[pPhaseId][1]
-        cur.execute('insert into avrg_pow (phId, powA, powB) values (%s, %s, %s)', [pPhaseId, powA, powB])
+        powAalt = powerList[pPhaseId][2]
+        powBalt = powerList[pPhaseId][3]
+        cur.execute('insert into avrg_pow (phId, powA, powB,  powAalt, powBalt) values (%s, %s, %s, %s, %s)',
+                    [pPhaseId, powA, powB, powAalt, powBalt])
     conn.commit()
 #conn.close()
     
