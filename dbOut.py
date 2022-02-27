@@ -12,6 +12,15 @@ def mesureAndPublish():
     db.addPowRes(powerList)
         
 
+itarval = 10
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        itarval = float(sys.argv[1])
+    
+    
+print('Starting with interval: {itarval}')
 while True:
     mesureAndPublish()
-    time.sleep(10)
+    time.sleep(itarval)
+    
+    
