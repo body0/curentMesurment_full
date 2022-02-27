@@ -19,7 +19,7 @@ if __name__ == "__main__":
         itarval = float(sys.argv[1])
     
     
-print('Starting with interval: {itarval}')
+print(f'Starting with interval: {itarval}')
 while True:
     mesureAndPublish()
     time.sleep(itarval)
