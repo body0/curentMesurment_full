@@ -2,6 +2,7 @@ import time
 import ioControl
 import analisis
 import db
+import sys
 
 def mesureAndPublish():
     phaseList = ioControl.mesure()
