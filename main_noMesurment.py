@@ -2,8 +2,7 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 import json
 import devIO
-import ioControl
-import analisis
+import powerAnalisis
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +28,7 @@ def boilerGet():
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow():
-    """ return json.dumps({
+    return json.dumps({
         "phase_EA": 0,
         "phase_EB": 0,
         "phase_EC": 0,
@@ -47,19 +46,6 @@ def powerOutputNow():
         "phase_HA": powerAnalisis.run(scaledMesurment, 0),
         "phase_HB": powerAnalisis.run(scaledMesurment, 2),
         "phase_HC": powerAnalisis.run(scaledMesurment, 3)
-    }) """
-    phaseList = ioControl.mesure()
-    batch = analisis.genBatch(phaseList)
-    sBatch = analisis.getShiftedBatch(batch)
-    ssBatch = analisis.scaleBatchToReal(sBatch)
-    powerList = analisis.getAvrgPower(ssBatch)
-    return json.dumps({
-        "phase_EA": powerList[0][1],
-        "phase_EB": powerList[1][1],
-        "phase_EC": powerList[2][1],
-        "phase_HA": powerList[0][0],
-        "phase_HB": powerList[1][0],
-        "phase_HC": powerList[2][0]
-    }) 
+    })
 
 app.run(host='0.0.0.0')

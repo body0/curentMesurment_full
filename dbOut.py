@@ -11,7 +11,7 @@ def mesureAndPublish():
     ssBatch = analisis.scaleBatchToReal(sBatch)
     powerList = analisis.getAvrgPower(ssBatch)
     db.addPowRes(powerList)
-        
+            
 
 itarval = 10
 if __name__ == "__main__":
