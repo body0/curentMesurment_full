@@ -108,12 +108,12 @@ def getAvrgPower(shiftedBatch):
         cB = []
         v = []
         for i, val in enumerate(phase):
-            powA.append(val[0] * val[2] * 325)
-            powB.append(val[1] * val[2] * 325)
+            powA.append(val[0] * val[2])
+            powB.append(val[1] * val[2])
             cA.append(val[0])
             cB.append(val[1])
-        powA_alt = getAvrgAbs(cA) * 325
-        powB_alt = getAvrgAbs(cB) * 325
+        powA_alt = getAvrgAbs(cA) * 230
+        powB_alt = getAvrgAbs(cB) * 230
         ret.append([powA_alt, powB_alt, getAvrg(powA), getAvrg(powB)])
     return ret
 
@@ -121,17 +121,17 @@ def scaleBatchToReal(batch):
     for phase in batch:
         for i, val in enumerate(phase):
             # old multiplier 4.12
-            phase[i][0] = val[0] / 0x800 * 25.125
-            phase[i][1] = val[1] / 0x800 * 25.125
-            phase[i][2] = val[2] * 0.282069314 # TO PEEK 1
+            phase[i][0] = val[0] / 0x800 * 25.12
+            phase[i][1] = val[1] / 0x800 * 25.12
+            phase[i][2] = val[2] * 0.282069314 # TO PEEK 325
     return batch
 
 def scaleBatch(batch):
     for phase in batch:
         for i, val in enumerate(phase):
-            phase[i][0] = val[0] / 0x800 * 25.125
-            phase[i][1] = val[1] / 0x800 * 25.125
-            phase[i][2] = val[2] * 0.0008671875 # TO PEEK 1
+            phase[i][0] = val[0] / 0x800 * 25.12
+            phase[i][1] = val[1] / 0x800 * 25.12
+            phase[i][2] = val[2] * 0.0008671875 # TO PEEK 325
     return batch
             
             
