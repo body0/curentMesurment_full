@@ -47,7 +47,7 @@ def powerOutputNow():
         "phase_EC_pfac": powerList[2][5],
         "phase_HA_pfac": powerList[0][4],
         "phase_HB_pfac": powerList[1][4],
-        "phase_HC_pfac": powerList[2][4],
+        "phase_HC_pfac": powerList[2][4]
     }) 
 
 app.run(host='0.0.0.0')
