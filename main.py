@@ -34,6 +34,7 @@ def powerOutputNow():
     sBatch = analisis.getShiftedBatch(batch)
     ssBatch = analisis.scaleBatchToReal(sBatch)
     powerList = analisis.getAvrgPower(ssBatch)
+    print(powerList)
     return json.dumps({
         "phase_EA": powerList[0][1],
         "phase_EB": powerList[1][1],

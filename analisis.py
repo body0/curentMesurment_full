@@ -102,21 +102,23 @@ def getAvrgAbs(arr):
 def getAvrgPower(shiftedBatch):
     ret = []
     for phaseId, phase in enumerate(shiftedBatch):
-        powA = []
-        powB = []
+        powA_list = []
+        powB_list = []
         cA = []
         cB = []
         v = []
         for i, val in enumerate(phase):
-            powA.append(val[0] * val[2])
-            powB.append(val[1] * val[2])
+            powA_list.append(val[0] * val[2])
+            powB_list.append(val[1] * val[2])
             cA.append(val[0])
             cB.append(val[1])
+        powA = getAvrg(powA_list)
+        powB = getAvrg(powB_list)
         powA_alt = getAvrgAbs(cA) * 230
         powB_alt = getAvrgAbs(cB) * 230
         powA_factor = powA / powA_alt 
         powB_factor = powB / powB_alt
-        ret.append([powA_alt, powB_alt, getAvrg(powA), getAvrg(powB), powA_factor, powB_factor])
+        ret.append([powA_alt, powB_alt, powA, powB, powA_factor, powB_factor])
     return ret
 
 def scaleBatchToReal(batch):
