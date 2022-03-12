@@ -114,7 +114,9 @@ def getAvrgPower(shiftedBatch):
             cB.append(val[1])
         powA_alt = getAvrgAbs(cA) * 230
         powB_alt = getAvrgAbs(cB) * 230
-        ret.append([powA_alt, powB_alt, getAvrg(powA), getAvrg(powB)])
+        powA_factor = powA / powA_alt 
+        powB_factor = powB / powB_alt
+        ret.append([powA_alt, powB_alt, getAvrg(powA), getAvrg(powB), powA_factor, powB_factor])
     return ret
 
 def scaleBatchToReal(batch):

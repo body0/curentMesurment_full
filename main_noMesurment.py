@@ -2,7 +2,6 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 import json
 import devIO
-import powerAnalisis
 
 app = Flask(__name__)
 CORS(app)
@@ -36,16 +35,6 @@ def powerOutputNow():
         "phase_HB": 0,
         "phase_HC": 0,
     })
-    rawMersument = devIO.mesure()
-    scaledMesurment = powerAnalisis.scaleValues(rawMersument)
-    solarPower = powerAnalisis.run(scaledMesurment, 1)
-    return json.dumps({
-        "phase_EA": solarPower,
-        "phase_EB": solarPower,
-        "phase_EC": solarPower,
-        "phase_HA": powerAnalisis.run(scaledMesurment, 0),
-        "phase_HB": powerAnalisis.run(scaledMesurment, 2),
-        "phase_HC": powerAnalisis.run(scaledMesurment, 3)
-    })
+
 
 app.run(host='0.0.0.0')
