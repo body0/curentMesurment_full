@@ -121,6 +121,15 @@ def getAvrgPower(shiftedBatch):
         ret.append([powA_alt, powB_alt, powA, powB, powA_factor, powB_factor])
     return ret
 
+def getAvrgFullPower(avrgPowList):
+    ret = [[0,0], [0,0]]
+    for phaseId, phase in enumerate(avrgPowList):
+        ret[0][0] += phase[0] * phase[4]
+        ret[0][1] += phase[1] * phase[5]
+        ret[1][0] += phase[2] * phase[4]
+        ret[1][1] += phase[3] * phase[5]
+    return ret
+
 def scaleBatchToReal(batch):
     for phase in batch:
         for i, val in enumerate(phase):

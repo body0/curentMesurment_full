@@ -68,7 +68,7 @@ https://www.ti.com/lit/ds/symlink/ads1015.pdf?ts=1637486256575&ref_url=https%253
 
  """   
 
-def mesurePhase(addr_A, addr_B):
+""" def mesurePhase_PY(addr_A, addr_B):
     curent_chA = [None] * SAMPLE_COUNT
     curent_chB = [None] * SAMPLE_COUNT
     voltage = [None] * SAMPLE_COUNT
@@ -91,12 +91,13 @@ def mesurePhase(addr_A, addr_B):
       "eTime": endTime,
     }
 
-def mesureAllPhase():
+def mesureAllPhase_PY():
     phaseList = [None,None,None]
 
     voltBus.write_i2c_block_data(0x48, 1, VOLTAGE_CONFIG)
-    phaseList[1]= mesurePhase(0x4b, 0x49) # SWITCHED!!
-    phaseList[0]= mesurePhase(0x48, 0x4b) # SWITCHED!!
+    # 0x4b 0x48 0x49
+    phaseList[0]= mesurePhase(0x4b, 0x49) # SWITCHED!!
+    phaseList[1]= mesurePhase(0x48, 0x4b) # SWITCHED!!
     phaseList[2]= mesurePhase(0x49, 0x48)
 
     curBus.write_i2c_block_data(0x48, 1, NULL_CONFIG)
@@ -109,7 +110,9 @@ def mesureAllPhase():
         phaseList[i]["voltage"] = preProcesPhase(phaseList[i]["voltage"])
         phaseList[i]["sCount"] = SAMPLE_COUNT
     
-    return phaseList
+    return phaseList """
+
+
 
 def mesure():
     print('START mesurment')

@@ -1,9 +1,10 @@
 from flask import Flask, Response, request
 from flask_cors import CORS
 import json
-import devIO
 import ioControl
-import analisis
+import power
+import ruleEvaluator
+
 
 app = Flask(__name__)
 CORS(app)
@@ -16,25 +17,22 @@ def testApi():
 def boilerSet():
     content = request.get_json()
     #print(content)
-    devIO.setBoilerState(content['targetState'])
+    ruleEvaluator.setEnableEvaluation(content['overideActive'])
+    if content['overideActive']:
+        ioControl.setBoilerState(content['state'])
     return json.dumps({
-        "curentState": devIO.getBoilerState()
+        "curentState": ioControl.getBoilerState()
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet():
     return json.dumps({
-        "curentState": devIO.getBoilerState()
+        "curentState": ioControl.getBoilerState()
     })
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow():
-    phaseList = ioControl.mesure()
-    batch = analisis.genBatch(phaseList)
-    sBatch = analisis.getShiftedBatch(batch)
-    ssBatch = analisis.scaleBatchToReal(sBatch)
-    powerList = analisis.getAvrgPower(ssBatch)
-    print(powerList)
+    powerList = power.getPower()
     return json.dumps({
         "phase_EA": powerList[0][1],
         "phase_EB": powerList[1][1],

@@ -48,12 +48,8 @@ typedef struct {
 void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, phaseList.startTime, phaseList.endTime);
     for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
-        /* printf("%u|%u|%u\n", ((unsigned int)phaseList.cIn[sampleId * 2]) <<
-           8, (unsigned int)phaseList.cIn[sampleId * 2], (unsigned
-           int)phaseList.cIn[sampleId * 2 + 1]); */
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
-        // printf("%u\n", cIn);
         unsigned int cOut =
             (((unsigned int)phaseList.cOut[sampleId * 2]) << 8) +
             (unsigned int)phaseList.cOut[sampleId * 2 + 1];
@@ -133,8 +129,8 @@ int runIO(Common env) {
     /* PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC); */
-    PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
-    PhData ph1 = readIOGen(env, ADDR_CB, ADDR_CC);  // SWITCHED !!
+    PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);
+    PhData ph2 = readIOGen(env, ADDR_CB, ADDR_CC);
     PhData ph3 = readIOGen(env, ADDR_CC, ADDR_CA);
     outputVal(env, 0, ph1);
     outputVal(env, 1, ph2);

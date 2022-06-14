@@ -1,7 +1,7 @@
 from flask import Flask, Response, request
 from flask_cors import CORS
 import json
-import devIO
+import ioControl
 
 app = Flask(__name__)
 CORS(app)
@@ -14,15 +14,15 @@ def testApi():
 def boilerSet():
     content = request.get_json()
     #print(content)
-    devIO.setBoilerState(content['targetState'])
+    ioControl.setBoilerState(content['targetState'])
     return json.dumps({
-        "curentState": devIO.getBoilerState()
+        "curentState": ioControl.getBoilerState()
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet():
     return json.dumps({
-        "curentState": devIO.getBoilerState()
+        "curentState": ioControl.getBoilerState()
     })
 
 @app.route('/api/power/outputNow', methods=['POST'])
