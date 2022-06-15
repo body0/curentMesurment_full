@@ -16,7 +16,6 @@ def testApi():
 @app.route('/api/boiler/set', methods=['POST'])
 def boilerSet():
     content = request.get_json()
-    print(content)
     ruleEvaluator.setEnableEvaluation(content['overideActive'])
     if content['overideActive']:
         ioControl.setBoilerState(content['state'])
