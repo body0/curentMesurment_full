@@ -19,6 +19,7 @@ def boilerSet():
     print(content)
     ruleEvaluator.setEnableEvaluation(content['overideActive'])
     if content['overideActive']:
+        print(content)
         ioControl.setBoilerState(content['state'])
     return json.dumps({
         "curentState": ioControl.getBoilerState(),
