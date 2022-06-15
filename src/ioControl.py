@@ -31,6 +31,16 @@ def writeGPIO(portID, value):
 
 
 
+def parseValuesInList(valList):
+    ret = []
+    for num in valList:
+        shiftedNum = num >> 4
+        signNum = shiftedNum
+        if (signNum > 0x07FF):
+            signNum = signNum - 0x1000
+        ret.append(signNum)
+    return ret
+ 
 def mesure():
     print('START mesurment')
     #phaseList = mesureAllPhase()
