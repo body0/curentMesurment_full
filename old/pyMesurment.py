@@ -10,8 +10,8 @@ VOLTAGE_CONFIG = [0x00, 0xA0]
 CURENT_CONFIG_01 = [0x08, 0xE3]
 CURENT_CONFIG_23 = [0x38, 0xE3]
 NULL_CONFIG = [0x1, 0x83]
-curBus = SMBus(1)
-voltBus = SMBus(0)
+curBus = SMBus(0)
+voltBus = SMBus(1)
 
 
 def parseValuesInList(valList):

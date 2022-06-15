@@ -16,8 +16,8 @@
 #define ADDR_CC 0x49
 #define ADDR_V 0x48
 
-#define I2C_FILE_C "/dev/i2c-1"
-#define I2C_FILE_V "/dev/i2c-0"
+#define I2C_FILE_C "/dev/i2c-0"
+#define I2C_FILE_V "/dev/i2c-1"
 #define OUT_FILE "/tmp/phase"
 #define CONFIG_REG 0x01
 #define READ_REG 0x00
