@@ -10,6 +10,9 @@ def setEnableEvaluation(newVal):
     if enableEvaluation == newVal:
          activeRule = False
     enableEvaluation = newVal
+    
+def getEnableEvaluetion():
+    return enableEvaluation
 
 def setRuleLis(newList):
     global ruleList, activeRule

@@ -27,7 +27,9 @@ def boilerSet():
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet():
     return json.dumps({
-        "curentState": ioControl.getBoilerState()
+        "curentState": ioControl.getBoilerState(),
+        "overideActive": ruleEvaluator.getEnableEvaluetion(),
+        "controlList": ruleEvaluator.exportRuleList()
     })
     
 @app.route('/api/boiler/rule/set', methods=['POST'])
