@@ -17,7 +17,10 @@ def getEnableEvaluetion():
 def setRuleLis(newList):
     global ruleList, activeRule
     activeRule = False
-    ruleList = map(_parseRule, newList)
+    newRuleList = []
+    for rule in newList:
+        newRuleList.append(_parseRule(rule))
+    ruleList = newRuleList
     
 def _parseRule(rule):
     parsedVal = None
@@ -52,7 +55,10 @@ def _parseRule(rule):
     
 def exportRuleList():
     global ruleList
-    return map(_exportRule, ruleList)
+    newRuleList = []
+    for rule in ruleList:
+        newRuleList.append(_exportRule(rule))
+    return newRuleList
     
 def _exportRule(rule):
     parsedVal = None
