@@ -6,7 +6,7 @@ enableEvaluation = False
 
 
 def setEnableEvaluation(newVal):
-    global activeRule
+    global activeRule, enableEvaluation
     if enableEvaluation == newVal:
          activeRule = False
     enableEvaluation = newVal
