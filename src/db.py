@@ -44,9 +44,13 @@ def selectTest():
 
 def connectToDb():
     global conn
+    _host = os.getenv('DB_HOST')
+    _port = os.getenv('DB_PORT')
+    print(f'DB, config: {_host}:{_port}')
+    
     conn = psycopg2.connect(
-    host=os.getenv('DB_HOST'),
-    port = os.getenv('DB_PORT'),
+    host=_host,
+    port=_port,
     database="record",
     user="apiuser",
     password=os.getenv('DB_PASS'))
