@@ -19,17 +19,16 @@ def boilerSet():
     print(content)
     ruleEvaluator.setEnableEvaluation(content['overideActive'])
     if content['overideActive']:
-        print(content)
         ioControl.setBoilerState(content['state'])
     return json.dumps({
-        "curentState": ioControl.getBoilerState(),
+        "state": ioControl.getBoilerState(),
         "overideActive": ruleEvaluator.getEnableEvaluetion()
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet():
     return json.dumps({
-        "curentState": ioControl.getBoilerState(),
+        "state": ioControl.getBoilerState(),
         "overideActive": ruleEvaluator.getEnableEvaluetion(),
         "controlList": ruleEvaluator.exportRuleList()
     })
