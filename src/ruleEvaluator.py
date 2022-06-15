@@ -25,17 +25,17 @@ def setRuleLis(newList):
 def _parseRule(rule):
     parsedVal = None
     cType = rule["type"]
-    pld = rule["val"]
+    pld = rule["value"]
     negate = bool(cType == "timeOFF" or cType == "powInOFF" or cType == "powDiffOFF")
     if cType == "timeON" or cType == "timeOFF":
-        val = {
+        parsedVal = {
             "startH": pld["startH"],
             "startM": pld["startM"],
             "endH": pld["endH"],
             "endM": pld["endM"]
         }
     elif cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
-        val = {
+        parsedVal = {
             "powVal": pld["powVal"],
             "holdFor_H": pld["holdFor_H"],
             "holdFor_M": pld["holdFor_M"]
@@ -65,14 +65,14 @@ def _exportRule(rule):
     cType = rule["type"]
     pld = rule["pld"]
     if cType == "timeON" or cType == "timeOFF":
-        return {
+        parsedVal = {
             "startH": pld["startH"],
             "startM": pld["startM"],
             "endH": pld["endH"],
             "endM": pld["endM"]
         }
     elif cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
-        return {
+        parsedVal = {
             "powVal": pld["powVal"],
             "holdFor_H": pld["holdFor_H"],
             "holdFor_M": pld["holdFor_M"]
@@ -82,7 +82,7 @@ def _exportRule(rule):
     return {
         "enable": rule["enable"],
         "type": cType,
-        "val": parsedVal
+        "value": parsedVal
     }
 
 def evalRules(fullPowerList):
@@ -107,25 +107,26 @@ def evalRules(fullPowerList):
             continue
         cType = rule["type"]
         resVal = rule["resultVal"]
+        pld = rule["pld"]
         if cType == "timeON" or cType == "timeOFF":
-            if inRange(rule["val"]["startH"], rule["val"]["startM"], rule["val"]["endH"], rule["val"]["endM"]):
+            if inRange(pld["startH"], pld["startM"], pld["endH"], pld["endM"]):
                 return (rId, resVal)
                      
         if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
-            minTrigetTime = datetime.now() - datetime.timedelta(minutes=rule["val"]["holdFor_M"], hours=rule["val"]["holdFor_M"])
+            minTrigetTime = datetime.now() - datetime.timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
             if rId == activeRule and  rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)
             if cType == "powInON":
-                if rule["val"]["powVal"] < inPow:
+                if pld["powVal"] < inPow:
                     return (rId, resVal)
             elif cType == "powInOFF":
-                if rule["val"]["powVal"] > inPow:
+                if pld["powVal"] > inPow:
                     return (rId, resVal)
             elif cType == "powDiffON":
-                if rule["val"]["powVal"] < diff:
+                if pld["powVal"] < diff:
                     return (rId, resVal)
             elif cType == "powDiffOFF":
-                if rule["val"]["powVal"] > diff:
+                if pld["powVal"] > diff:
                     return (rId, resVal)
     activeRule = -1 #TODO (bad flow)
     return (-1, False)
