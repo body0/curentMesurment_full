@@ -3,6 +3,9 @@ import time
 
 import ioControl
 import analisis
+import db
+import ruleEvaluator
+
 
 
 def getPower():
@@ -36,6 +39,8 @@ def stopWatcher():
 def watherTick():
     global pMesScheduler, watcherPeriod, watcherRuning, curEvent
     pow = getPower()
+    db.tryAddPow(pow)
+    ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
     if watcherRuning:
         curEvent = pMesScheduler.enter(watcherPeriod, 1, watherTick)
     

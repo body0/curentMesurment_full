@@ -4,7 +4,10 @@ import json
 import ioControl
 import power
 import ruleEvaluator
+import db
 
+db.connectToDb()
+power.startWatcher()
 
 app = Flask(__name__)
 CORS(app)

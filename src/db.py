@@ -3,10 +3,18 @@ import psycopg2
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv(dotenv_path=Path('upstream.env'))
+load_dotenv(dotenv_path=Path('../upstream.env'))
+conn = None
+dbPowLogEnabled = True
 
+def tryAddPow(powerList):
+    global conn
+    if conn == None or not dbPowLogEnabled:
+        return
+    addPowRes(powerList)
 
 def addPowRes(powerList):
+    global conn
     cur = conn.cursor()
     for pPhaseId in range(len(powerList)):
         powA = powerList[pPhaseId][0]
@@ -16,7 +24,7 @@ def addPowRes(powerList):
         cur.execute('insert into avrg_pow (phId, powA, powB,  powAalt, powBalt) values (%s, %s, %s, %s, %s)',
                     [pPhaseId, powA, powB, powAalt, powBalt])
     conn.commit()
-#conn.close()
+    #conn.close()
     
 def selectTest():
     cur = conn.cursor()
@@ -33,11 +41,13 @@ def selectTest():
     print("DB, test select")
     print(rows)
 
-conn = psycopg2.connect(
+
+def connectToDb():
+    global conn
+    conn = psycopg2.connect(
     host=os.getenv('DB_HOST'),
     port = os.getenv('DB_PORT'),
     database="record",
     user="apiuser",
     password=os.getenv('DB_PASS'))
-print("DB, connected")
-#selectTest()
+    print("DB, connected")
