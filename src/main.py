@@ -29,6 +29,14 @@ def boilerGet():
     return json.dumps({
         "curentState": ioControl.getBoilerState()
     })
+    
+    
+@app.route('/api/boiler/rule/set', methods=['POST'])
+def boilerGet():
+    content = request.get_json()
+    ruleEvaluator.setRuleLis(content["controlList"])
+    return json.dumps({
+    })
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow():

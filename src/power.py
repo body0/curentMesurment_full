@@ -1,8 +1,6 @@
 import sched
 import time
 
-from sqlalchemy import true
-
 import ioControl
 import analisis
 

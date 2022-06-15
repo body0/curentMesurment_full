@@ -11,7 +11,7 @@ def setEnableEvaluation(newVal):
          activeRule = False
     enableEvaluation = newVal
 
-def updateRuleLis(newList):
+def setRuleLis(newList):
     global ruleList, activeRule
     activeRule = False
     ruleList = map(_parseRule, newList)
