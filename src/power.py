@@ -20,27 +20,27 @@ def getPower():
 pMesScheduler = sched.scheduler(time.time, time.sleep)
 watcherPeriod = 100
 watcherRuning = False
-eer = None
+curentTimer = None
 
 def startWatcher():
-    global pMesScheduler, watcherPeriod, watcherRuning, curEvent
+    global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     watcherRuning = True  
-    if curEvent != None: 
-        pMesScheduler.cancel(curEvent)
-    curEvent = pMesScheduler.enter(watcherPeriod, 1, watherTick)
+    if curentTimer != None: 
+        pMesScheduler.cancel(curentTimer)
+    curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
     
 def stopWatcher():
-    global pMesScheduler, watcherPeriod, watcherRuning, curEvent
+    global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     watcherRuning = False  
-    if curEvent != None: 
-        pMesScheduler.cancel(curEvent)
+    if curentTimer != None: 
+        pMesScheduler.cancel(curentTimer)
     
     
 def watherTick():
-    global pMesScheduler, watcherPeriod, watcherRuning, curEvent
+    global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     pow = getPower()
     db.tryAddPow(pow)
     ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
     if watcherRuning:
-        curEvent = pMesScheduler.enter(watcherPeriod, 1, watherTick)
+        curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
     
