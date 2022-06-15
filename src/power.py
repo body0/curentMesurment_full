@@ -19,7 +19,7 @@ def getPower():
 pMesScheduler = sched.scheduler(time.time, time.sleep)
 watcherPeriod = 100
 watcherRuning = False
-curEvent = None
+eer = None
 
 def startWatcher():
     global pMesScheduler, watcherPeriod, watcherRuning, curEvent

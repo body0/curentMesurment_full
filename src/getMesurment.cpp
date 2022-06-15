@@ -11,7 +11,7 @@
 #include <sstream>
 
 #define SAMPLE_COUNT 300
-#define ADDR_CA 0x4b
+#define ADDR_CA 0x4a
 #define ADDR_CB 0x48
 #define ADDR_CC 0x49
 #define ADDR_V 0x48
