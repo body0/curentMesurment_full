@@ -1,14 +1,14 @@
 import datetime
 
 ruleList = []
-activeRule = False
+activeRule = -1
 enableEvaluation = False
 
 
 def setEnableEvaluation(newVal):
     global activeRule, enableEvaluation
     if enableEvaluation == newVal:
-         activeRule = False
+         activeRule = -1
     enableEvaluation = newVal
     
 def getEnableEvaluetion():
@@ -16,7 +16,7 @@ def getEnableEvaluetion():
 
 def setRuleLis(newList):
     global ruleList, activeRule
-    activeRule = False
+    activeRule = -1
     newRuleList = []
     for rule in newList:
         newRuleList.append(_parseRule(rule))
@@ -127,6 +127,7 @@ def evalRules(fullPowerList):
             elif cType == "powDiffOFF":
                 if rule["val"]["powVal"] > diff:
                     return (rId, resVal)
+    activeRule = -1 #TODO (bad flow)
     return (-1, False)
 
     
