@@ -1,4 +1,5 @@
-import sched
+import schedule
+import threading
 import time
 
 import ioControl
@@ -17,7 +18,7 @@ def getPower():
     return powerList
 
 
-pMesScheduler = sched.scheduler(time.time, time.sleep)
+# pMesScheduler = sched.scheduler(time.time, time.sleep)
 watcherPeriod = 100
 watcherRuning = False
 curentTimer = None
@@ -27,9 +28,8 @@ def startWatcher():
     print("Pow, starting watcher")
     watcherRuning = True  
     if curentTimer != None: 
-        pMesScheduler.cancel(curentTimer)
-    curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
-    pMesScheduler.run()
+        schedule.cancel_job(curentTimer)
+    curentTimer = schedule.every(watcherPeriod).seconds.do(run_threaded, watherTick)
     
     
 def stopWatcher():
@@ -41,12 +41,16 @@ def stopWatcher():
     curentTimer = None
     
     
+def run_threaded(job_func):
+    job_thread = threading.Thread(target=job_func)
+    job_thread.start()
+    
 def watherTick():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     print("Pow, TICK")
     pow = getPower()
     db.tryAddPow(pow)
     ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
-    if watcherRuning:
+    """ if watcherRuning:
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
-        pMesScheduler.run()
+        pMesScheduler.run() """
