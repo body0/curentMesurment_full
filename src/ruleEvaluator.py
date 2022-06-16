@@ -90,6 +90,7 @@ def evalRules(fullPowerList):
     if not enableEvaluation:
         return
     (rId, res) = evalRules(fullPowerList)
+    print(rId, res)
     if rId == -1:
         return res
     activeRule = rId
@@ -108,6 +109,7 @@ def evalRules(fullPowerList):
         cType = rule["type"]
         resVal = rule["resultVal"]
         pld = rule["pld"]
+        print(cType, resVal, pld)
         if cType == "timeON" or cType == "timeOFF":
             if inRange(pld["startH"], pld["startM"], pld["endH"], pld["endM"]):
                 return (rId, resVal)
