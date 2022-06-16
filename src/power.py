@@ -18,7 +18,7 @@ def getPower():
     return powerList
 
 
-watcherPeriod = 10
+watcherPeriod = 40
 watcherRuning = False
 curentTimer = None
 
