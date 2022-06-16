@@ -18,7 +18,6 @@ def getPower():
     return powerList
 
 
-# pMesScheduler = sched.scheduler(time.time, time.sleep)
 watcherPeriod = 10
 watcherRuning = False
 curentTimer = None
@@ -26,7 +25,7 @@ curentTimer = None
 
 
 def startWatcher():
-    global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
+    global watcherPeriod, watcherRuning, curentTimer
     print("Pow, starting watcher")
     watcherRuning = True  
     clearWatcher()
@@ -34,14 +33,14 @@ def startWatcher():
     
     
 def stopWatcher():
-    global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
+    global watcherPeriod, watcherRuning
     print("Pow, stopping watcher")
     watcherRuning = False  
     clearWatcher()
-    curentTimer = None
     
     
 def clearWatcher():
+    global curentTimer
     """ if curentTimer != None: 
         pMesScheduler.cancel(curentTimer) """
     """ if curentTimer != None: 
