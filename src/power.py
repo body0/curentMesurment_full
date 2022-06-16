@@ -24,6 +24,7 @@ curentTimer = None
 
 def startWatcher():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
+    print("Pow, starting watcher")
     watcherRuning = True  
     if curentTimer != None: 
         pMesScheduler.cancel(curentTimer)
@@ -31,13 +32,16 @@ def startWatcher():
     
 def stopWatcher():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
+    print("Pow, stopping watcher")
     watcherRuning = False  
     if curentTimer != None: 
         pMesScheduler.cancel(curentTimer)
+    curentTimer = None
     
     
 def watherTick():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
+    print("Pow, TICK")
     pow = getPower()
     db.tryAddPow(pow)
     ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
