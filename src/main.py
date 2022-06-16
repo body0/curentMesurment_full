@@ -6,9 +6,12 @@ import power
 import ruleEvaluator
 import db
 
+
+print("INIT, start init")
 db.connectToDb()
 power.startWatcher()
 
+print("INIT, start start api")
 app = Flask(__name__)
 CORS(app)
 
