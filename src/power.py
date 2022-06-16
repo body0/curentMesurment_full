@@ -29,6 +29,8 @@ def startWatcher():
     if curentTimer != None: 
         pMesScheduler.cancel(curentTimer)
     curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
+    pMesScheduler.run()
+    
     
 def stopWatcher():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
@@ -47,4 +49,4 @@ def watherTick():
     ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
     if watcherRuning:
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
-    
+        pMesScheduler.run()
