@@ -5,6 +5,7 @@ import time
 import ioControl
 import analisis
 import db
+import mqtt
 import ruleEvaluator
 
 
@@ -81,7 +82,13 @@ def run_continuously(interval=1):
 def watherTick():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     print("Pow, TICK")
-    pow = getPower()
+    # pow = getPower()
+    phaseList = ioControl.mesure()
+    batch = analisis.genBatch(phaseList)
+    sBatch = analisis.getShiftedBatch(batch)
+    ssBatch = analisis.scaleBatchToReal(sBatch)
+    pow = analisis.getAvrgPower(ssBatch)
+    mqtt.publish(phaseList)
     db.tryAddPow(pow)
     ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
     """ if watcherRuning:
