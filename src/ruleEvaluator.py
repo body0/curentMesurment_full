@@ -6,9 +6,8 @@ enableEvaluation = False
 
 
 def setEnableEvaluation(newVal):
-    print(f"x {newVal}")
     global activeRule, enableEvaluation
-    if enableEvaluation == newVal:
+    if enableEvaluation != newVal:
          activeRule = -1
     enableEvaluation = newVal
     
