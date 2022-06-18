@@ -12,16 +12,20 @@ client_id = 'rockPI'
 # password = 'public'
 
 relePortID = '68'
+client = None
 
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("Connected to MQTT Broker!")
-    else:
-        print("Failed to connect, return code %d\n", rc)
-client = mqtt_client.Client(client_id)
-#client.username_pw_set(username, password)
-#client.on_connect = on_connect
-client.connect(broker, port)
+def init():
+    global client
+    print("MQTT, init")
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+    client = mqtt_client.Client(client_id)
+    #client.username_pw_set(username, password)
+    client.on_connect = on_connect
+    client.connect(broker, port)
 
 def getCurentTopic(id=0):
     return f'/curent_now/{id}'
@@ -30,6 +34,7 @@ def getVoltageTopic(id=0):
 
 
 def publish(phaseList):
+    global client
     for phaseId in range(len(phaseList)):
         # print(phaseList[phaseId]["sCount"])
         for sampleId in range(phaseList[phaseId]["sCount"]):

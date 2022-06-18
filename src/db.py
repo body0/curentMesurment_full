@@ -11,7 +11,6 @@ def tryAddPow(powerList):
     global conn
     if conn == None or not dbPowLogEnabled:
         return
-    print("DB, log")
     addPowRes(powerList)
 
 def addPowRes(powerList):
