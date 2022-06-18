@@ -5,11 +5,13 @@ import ioControl
 import power
 import ruleEvaluator
 import db
+import mqtt
 
 
 print("INIT, start init")
 db.connectToDb()
 power.startWatcher()
+mqtt.init()
 
 print("INIT, start start api")
 app = Flask(__name__)
