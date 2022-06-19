@@ -3,7 +3,7 @@ from subprocess import run
 
 
 def getPhaseList():
-    p = run( [ './run.out' ] ) 
+    p = run( [ 'nice -n -19 ./run.out' ] ) 
     if p.returncode != 0 :
         sys.exit("Eroor in subprogram (getting power)")  
     return loadData()
