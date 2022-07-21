@@ -89,7 +89,7 @@ def evalRules(fullPowerList):
     global enableEvaluation, activeRule, ruleList
     if not enableEvaluation:
         return
-    (rId, res) = evalRules(fullPowerList)
+    (rId, res) = _evalRules(fullPowerList)
     print(rId, res)
     if rId == -1:
         return res
@@ -98,11 +98,8 @@ def evalRules(fullPowerList):
     ruleList[rId]["lastTrigeTs"] = datetime.now()
     return res                  
              
-def evalRules(fullPowerList):
+def _evalRules(fullPowerList):
     global activeRule, ruleList
-    inPow = fullPowerList[1][0]
-    outPow = fullPowerList[1][1]
-    diff = inPow - outPow
     for rId, rule in enumerate(ruleList):
         if not rule["enable"]:
             continue
@@ -114,8 +111,11 @@ def evalRules(fullPowerList):
             if inRange(pld["startH"], pld["startM"], pld["endH"], pld["endM"]):
                 return (rId, resVal)
                      
-        if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
+        if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == " ":
             minTrigetTime = datetime.now() - datetime.timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
+            inPow = fullPowerList[0]
+            outPow = fullPowerList[1]
+            diff = inPow - outPow
             if rId == activeRule and  rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)
             if cType == "powInON":

@@ -88,9 +88,9 @@ def watherTick():
     sBatch = analisis.getShiftedBatch(batch)
     ssBatch = analisis.scaleBatchToReal(sBatch)
     pow = analisis.getAvrgPower(ssBatch)
-    mqtt.publish(phaseList)
     db.tryAddPow(pow)
-    ruleEvaluator.evalRules(analisis.getAvrgFullPower(pow))
+    mqtt.publish(phaseList)
+    ruleEvaluator.evalRules(analisis.getAvrgFullAltPower(pow))
     """ if watcherRuning:
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
         pMesScheduler.run() """

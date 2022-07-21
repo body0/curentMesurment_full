@@ -1,6 +1,7 @@
 from flask import Flask, Response, request
 from flask_cors import CORS
 import json
+import os
 import ioControl
 import power
 import ruleEvaluator
@@ -10,10 +11,14 @@ import mqtt
 
 print("INIT, start init")
 db.connectToDb()
-power.startWatcher()
 mqtt.init()
+power.startWatcher()
 
-print("INIT, start start api")
+usedPort = 3000 
+if (os.environ.get('ENV') == "PROD"): 
+    usedPort = 3100
+     
+print(f"INIT, start api on {usedPort}")
 app = Flask(__name__)
 CORS(app)
 
@@ -66,4 +71,4 @@ def powerOutputNow():
         "phase_HC_pfac": powerList[2][4]
     }) 
 
-app.run(host='0.0.0.0')
+app.run(host='0.0.0.0', port=usedPort)
