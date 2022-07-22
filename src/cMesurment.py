@@ -7,7 +7,8 @@ if (os.geteuid() == 0):
     rootPriv=True
 
 def getPhaseList():
-    p = run( [ f'nice -n {-19 if rootPriv else 0} ./run.out' ] ) 
+    # p = run( [ f'nice -n {-19 if rootPriv else 0} ./run.out' ] ) 
+    p = run( [ f'./elvPremAndRum.sh' ] ) 
     if p.returncode != 0 :
         sys.exit("Eroor in subprogram (getting power)")  
     return loadData()
