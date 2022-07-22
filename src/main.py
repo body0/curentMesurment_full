@@ -24,7 +24,7 @@ CORS(app)
 
 @app.route('/api/', methods=['GET'])
 def testApi():
-    return 'Hallo'
+    return f'Hallo; port:{usedPort}'
 
 @app.route('/api/boiler/set', methods=['POST'])
 def boilerSet():
