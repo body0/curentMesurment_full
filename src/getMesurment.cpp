@@ -157,8 +157,10 @@ int runIO(Common env) {
 
 int main(int argc, char const* argv[]) {
     // SET NIDE VALUE
-    id_t pid = getpid();;
+    id_t pid = getpid();
     int ret = setpriority(PRIO_PROCESS, pid, -20);
+    printf("PID UID: %d %d\n", getpid(), getuid());
+
 
     Common env;
     env.cBus = open(I2C_FILE_C, O_RDWR);
@@ -166,7 +168,7 @@ int main(int argc, char const* argv[]) {
     env.outDesc = fopen(OUT_FILE, "w");
 
     int retCode = runIO(env);
-    // printf("End with %d\n", retCode);
+    printf("End with %d\n", retCode);
 
     close(env.cBus);
     close(env.vBus);
