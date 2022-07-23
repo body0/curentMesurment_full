@@ -13,10 +13,6 @@
 #include <unistd.h>
 #include <sys/resource.h>
 
-// SET NIDE VALUE
-id_t pid = getpid();;
-int ret = setpriority(PRIO_PROCESS, pid, -20);
-
 #define SAMPLE_COUNT 300
 #define ADDR_CA 0x4a
 #define ADDR_CB 0x48
@@ -160,6 +156,10 @@ int runIO(Common env) {
 }
 
 int main(int argc, char const* argv[]) {
+    // SET NIDE VALUE
+    id_t pid = getpid();;
+    int ret = setpriority(PRIO_PROCESS, pid, -20);
+
     Common env;
     env.cBus = open(I2C_FILE_C, O_RDWR);
     env.vBus = open(I2C_FILE_V, O_RDWR);
