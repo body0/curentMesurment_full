@@ -15,8 +15,8 @@ mqtt.init()
 power.startWatcher()
 
 usedPort = 3000 
-if (os.environ.get('ENV') == "PROD"): 
-    usedPort = 3100
+# if (os.environ.get('ENV') == "PROD"): 
+#     usedPort = 3100
      
 print(f"INIT, start api on {usedPort}")
 app = Flask(__name__)
