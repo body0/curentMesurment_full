@@ -159,7 +159,7 @@ int main(int argc, char const* argv[]) {
     // SET NIDE VALUE
     id_t pid = getpid();
     int ret = setpriority(PRIO_PROCESS, pid, -20);
-    printf("PID UID: %d %d\n", getpid(), getuid());
+    // printf("PID UID ret: %d %d %d\n", getpid(), getuid(), ret);
 
 
     Common env;
@@ -168,7 +168,7 @@ int main(int argc, char const* argv[]) {
     env.outDesc = fopen(OUT_FILE, "w");
 
     int retCode = runIO(env);
-    printf("End with %d\n", retCode);
+    // printf("End with %d\n", retCode);
 
     close(env.cBus);
     close(env.vBus);
