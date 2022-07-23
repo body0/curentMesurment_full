@@ -10,6 +10,13 @@
 #include <iostream>
 #include <sstream>
 
+#include <unistd.h>
+#include <sys/resource.h>
+
+// SET NIDE VALUE
+id_t pid = getpid();;
+int ret = setpriority(PRIO_PROCESS, pid, -20);
+
 #define SAMPLE_COUNT 300
 #define ADDR_CA 0x4a
 #define ADDR_CB 0x48
