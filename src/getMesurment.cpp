@@ -53,6 +53,8 @@ typedef struct {
 void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
+    clock_t lastTimePoint = phaseList.startPoint;
+    double const msMultConst = 1 / CLOCKS_PER_SEC * 1000;
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
@@ -62,7 +64,10 @@ void outputVal(Common env, int phId, PhData phaseList) {
         unsigned int v = (((unsigned int)phaseList.v[sampleId * 2]) << 8) +
                          (unsigned int)phaseList.v[sampleId * 2 + 1];
 
-        fprintf(env.outDesc, "=%u,%u,%u\n", cIn, cOut, v);
+        double tSpanIn = lastTimePoint - phaseList.timePoints[sampleId][0];
+        double tSpanV = phaseList.timePoints[sampleId][0] - phaseList.timePoints[sampleId][1];
+        double tSpanOut = phaseList.timePoints[sampleId][1] - phaseList.timePoints[sampleId][2];
+        fprintf(env.outDesc, "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut, tSpanV);
     }
 }
 
@@ -93,7 +98,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     gettimeofday(&start, NULL);
     ret.startPoint = clock();
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
-        subStart = clock();
+        /* subStart = clock(); */
 
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
@@ -101,20 +106,20 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         ret.timePoints[sampleId][0] = clock();
 
-        subEnd = clock();
+        /* subEnd = clock();
         printf("A: %.0f; ",
                (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
-        subStart = clock();
+        subStart = clock(); */
 
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
         ret.timePoints[sampleId][1] = clock();
 
-        subEnd = clock();
+        /* subEnd = clock();
         printf("B: %.0f; ",
                (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
-        subStart = clock();
+        subStart = clock(); */
 
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
@@ -122,14 +127,14 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         ret.timePoints[sampleId][2] = clock();
 
-        subEnd = clock();
+        /* subEnd = clock();
         printf("C: %.0f\n",
-               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000); */
     }
     gettimeofday(&end, NULL);
     retRef->startTime = start.tv_sec * 1000LL + start.tv_usec / 1000;
     retRef->endTime = end.tv_sec * 1000LL + end.tv_usec / 1000;
-    printf("T: %lld\n", retRef->endTime - retRef->startTime);
+    // printf("T: %lld\n", retRef->endTime - retRef->startTime);
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
@@ -169,14 +174,14 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
-    readIO_nullRun(env, ADDR_CA, ADDR_CB, NULLRUN_SAMPLE_COUNT);
+    readIO_nullRun(env, ADDR_CA, ADDR_CB, NULLRUN_SAMPLE_COUNT); // for std 
     /* PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC); */
     PhData ph1 = readIOGen(env, ADDR_CA, ADDR_CB);
     PhData ph2 = readIOGen(env, ADDR_CB, ADDR_CC);
     PhData ph3 = readIOGen(env, ADDR_CC, ADDR_CA);
-    printf("Load FIN\n");
+    // printf("Load FIN\n");
     outputVal(env, 0, ph1);
     outputVal(env, 1, ph2);
     outputVal(env, 2, ph3);
