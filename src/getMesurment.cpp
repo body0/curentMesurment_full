@@ -44,7 +44,8 @@ typedef struct {
     unsigned char* const cIn;
     unsigned char* const cOut;
     unsigned char* const v;
-    clock_t (*const timePoints)[4];
+    clock_t (*const timePoints)[3];
+    clock_t startPoint;
     long long int startTime;
     long long int endTime;
 } PhData;
@@ -90,15 +91,15 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     struct timeval start, end;
     clock_t subStart, subEnd;
     gettimeofday(&start, NULL);
+    ret.startPoint = clock();
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         subStart = clock();
 
         // read in
-        // ret.timePoints[sampleId][0] = clock();
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
-        ret.timePoints[sampleId][1] = clock();
+        ret.timePoints[sampleId][0] = clock();
 
         subEnd = clock();
         printf("A: %.0f; ",
@@ -108,7 +109,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
-        ret.timePoints[sampleId][2] = clock();
+        ret.timePoints[sampleId][1] = clock();
 
         subEnd = clock();
         printf("B: %.0f; ",
@@ -119,7 +120,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
-        ret.timePoints[sampleId][3] = clock();
+        ret.timePoints[sampleId][2] = clock();
 
         subEnd = clock();
         printf("C: %.0f\n",
@@ -138,8 +139,8 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     unsigned char* rec_v =
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
-    clock_t(*timePoints)[4] =
-        (clock_t(*)[4])malloc(env.sampleCount * sizeof(long int[4]));
+    clock_t(*timePoints)[3] =
+        (clock_t(*)[3])malloc(env.sampleCount * sizeof(clock_t[3]));
     PhData ret = {rec_cIn, rec_cOut, rec_v, timePoints};
     readIO(env, addrA, addrB, &ret);
     return ret;
