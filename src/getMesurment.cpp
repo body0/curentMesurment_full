@@ -107,7 +107,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
 
         gettimeofday(&subEnd, NULL);
-        printf("C: %lld; ",
+        printf("C: %lld\n",
                (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
                    (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
     }
