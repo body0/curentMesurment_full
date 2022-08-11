@@ -4,14 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/resource.h>
 #include <sys/time.h>
 #include <unistd.h>
 
 #include <iostream>
 #include <sstream>
-
-#include <unistd.h>
-#include <sys/resource.h>
 
 #define SAMPLE_COUNT 300
 #define ADDR_CA 0x4a
@@ -38,6 +36,7 @@ typedef struct {
     FILE* outDesc;
     int cBus;
     int vBus;
+    int sampleCount;
 } Common;
 
 typedef struct {
@@ -49,8 +48,9 @@ typedef struct {
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, SAMPLE_COUNT, phaseList.startTime, phaseList.endTime);
-    for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
+    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
+            phaseList.startTime, phaseList.endTime);
+    for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
         unsigned int cOut =
@@ -63,7 +63,8 @@ void outputVal(Common env, int phId, PhData phaseList) {
     }
 }
 
-void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef) {
+void readIO(Common env, unsigned char addrA, unsigned char addrB,
+            PhData* retRef) {
     PhData ret = *retRef;
     ioctl(env.cBus, I2C_SLAVE, addrA);
     write(env.cBus, CURENT_CONFIG_01, 3);
@@ -74,35 +75,55 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB, PhData* retRef
 
     struct timeval start;
     struct timeval end;
+    struct timeval subStart;
+    struct timeval subEnd;
     gettimeofday(&start, NULL);
-    for (int sampleId = 0; sampleId < SAMPLE_COUNT; sampleId++) {
+    for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
+        gettimeofday(&subStart, NULL);
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
 
+        gettimeofday(&subEnd, NULL);
+        printf("A: %lld; ",
+               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
+                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
+        gettimeofday(&subStart, NULL);
+               
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
+
+        gettimeofday(&subEnd, NULL);
+        printf("B: %lld; ",
+               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
+                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
+        gettimeofday(&subStart, NULL);
 
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+
+        gettimeofday(&subEnd, NULL);
+        printf("C: %lld; ",
+               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
+                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
     }
     gettimeofday(&end, NULL);
-    retRef->startTime =  start.tv_sec*1000LL + start.tv_usec/1000;
-    retRef->endTime =  end.tv_sec*1000LL + end.tv_usec/1000;
-    // printf("T: %lld\n", retRef->endTime-retRef->startTime);
+    retRef->startTime = start.tv_sec * 1000LL + start.tv_usec / 1000;
+    retRef->endTime = end.tv_sec * 1000LL + end.tv_usec / 1000;
+    printf("T: %lld\n", retRef->endTime - retRef->startTime);
 }
 
 PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
     unsigned char* rec_cIn =
-        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+        (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     unsigned char* rec_cOut =
-        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+        (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     unsigned char* rec_v =
-        (unsigned char*)malloc(SAMPLE_COUNT * 2 * sizeof(char));
+        (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     PhData ret = {rec_cIn, rec_cOut, rec_v};
     readIO(env, addrA, addrB, &ret);
     return ret;
@@ -115,6 +136,7 @@ void beFree(PhData data) {
 
 int runIO(Common env) {
     char nullBuff[2] = {0};
+    // Test avalibility
     if (ioctl(env.vBus, I2C_SLAVE, ADDR_V) < 0 ||
         write(env.vBus, VOLTAGE_CONFIG, 3) < 0 ||
         write(env.vBus, READ_CONF, 1) < 0 || read(env.vBus, nullBuff, 2) != 2 ||
@@ -156,16 +178,17 @@ int runIO(Common env) {
 }
 
 int main(int argc, char const* argv[]) {
+    if (argc < 2) return 1;
     // SET NIDE VALUE
     id_t pid = getpid();
     int ret = setpriority(PRIO_PROCESS, pid, -20);
     // printf("PID UID ret: %d %d %d\n", getpid(), getuid(), ret);
 
-
     Common env;
     env.cBus = open(I2C_FILE_C, O_RDWR);
     env.vBus = open(I2C_FILE_V, O_RDWR);
     env.outDesc = fopen(OUT_FILE, "w");
+    env.sampleCount = atoi(argv[1]);
 
     int retCode = runIO(env);
     // printf("End with %d\n", retCode);
