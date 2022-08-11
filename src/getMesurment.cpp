@@ -87,8 +87,8 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
 
         gettimeofday(&subEnd, NULL);
         printf("A: %lld; ",
-               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
-                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
+               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
+                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
         gettimeofday(&subStart, NULL);
 
         // read voltage
@@ -97,8 +97,8 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
 
         gettimeofday(&subEnd, NULL);
         printf("B: %lld; ",
-               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
-                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
+               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
+                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
         gettimeofday(&subStart, NULL);
 
         // read out
@@ -108,8 +108,8 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
 
         gettimeofday(&subEnd, NULL);
         printf("C: %lld\n",
-               (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
-                   (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
+               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
+                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
     }
     gettimeofday(&end, NULL);
     retRef->startTime = start.tv_sec * 1000LL + start.tv_usec / 1000;
