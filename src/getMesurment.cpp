@@ -44,6 +44,7 @@ typedef struct {
     unsigned char* const cIn;
     unsigned char* const cOut;
     unsigned char* const v;
+    clock_t (*const timePoints)[4];
     long long int startTime;
     long long int endTime;
 } PhData;
@@ -64,39 +65,18 @@ void outputVal(Common env, int phId, PhData phaseList) {
     }
 }
 
-/* void readIO_nullRun(Common env, int runNum, unsigned char* ) {
-    for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
-        subStart = clock();
-
-        // read in
+void readIO_nullRun(Common env, unsigned char addrA, unsigned char addrB,
+                    int runNum) {
+    unsigned char* tmp = (unsigned char*)malloc(2 * sizeof(char));
+    for (int sampleId = 0; sampleId < runNum; sampleId++) {
         ioctl(env.cBus, I2C_SLAVE, addrA);
-        // write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
-
-        subEnd = clock();
-        printf("A: %.0f; ",
-               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
-        subStart = clock();
-
-        // read voltage
-        // write(env.vBus, READ_CONF, 1);
-        read(env.vBus, &(ret.v[sampleId * 2]), 2);
-
-        subEnd = clock();
-        printf("B: %.0f; ",
-               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
-        subStart = clock();
-
-        // read out
+        read(env.cBus, tmp, 2);
+        read(env.vBus, tmp, 2);
         ioctl(env.cBus, I2C_SLAVE, addrB);
-        // write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
-
-        subEnd = clock();
-        printf("C: %.0f\n",
-               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+        read(env.cBus, tmp, 2);
     }
-} */
+    // free(tmp); //Small amount of mem, do not switch contexts
+}
 void readIO(Common env, unsigned char addrA, unsigned char addrB,
             PhData* retRef) {
     PhData ret = *retRef;
@@ -114,9 +94,11 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         subStart = clock();
 
         // read in
+        // ret.timePoints[sampleId][0] = clock();
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+        ret.timePoints[sampleId][1] = clock();
 
         subEnd = clock();
         printf("A: %.0f; ",
@@ -126,6 +108,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
+        ret.timePoints[sampleId][2] = clock();
 
         subEnd = clock();
         printf("B: %.0f; ",
@@ -136,6 +119,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+        ret.timePoints[sampleId][3] = clock();
 
         subEnd = clock();
         printf("C: %.0f\n",
@@ -154,7 +138,9 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     unsigned char* rec_v =
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
-    PhData ret = {rec_cIn, rec_cOut, rec_v};
+    clock_t(*timePoints)[4] =
+        (clock_t(*)[4])malloc(env.sampleCount * sizeof(long int[4]));
+    PhData ret = {rec_cIn, rec_cOut, rec_v, timePoints};
     readIO(env, addrA, addrB, &ret);
     return ret;
 }
@@ -162,6 +148,7 @@ void beFree(PhData data) {
     free(data.cIn);
     free(data.cOut);
     free(data.v);
+    free(data.timePoints);
 }
 
 int runIO(Common env) {
@@ -181,6 +168,7 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
+    readIO_nullRun(env, ADDR_CA, ADDR_CB, NULLRUN_SAMPLE_COUNT);
     /* PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC); */
@@ -219,7 +207,8 @@ int main(int argc, char const* argv[]) {
     int ret = nice(trgNiceVal);
     // int ret = setpriority(PRIO_PROCESS, pid, -19); // WHY NOT WORKING (TO DO)
     // int procRealPrior = getpriority(PRIO_PROCESS, pid);
-    // printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret, procRealPrior);
+    // printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret,
+    // procRealPrior);
     if (ret != trgNiceVal) {
         printf("End with %d\n", 20);
         return 20;
