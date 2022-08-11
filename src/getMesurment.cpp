@@ -182,7 +182,7 @@ int main(int argc, char const* argv[]) {
     }
     // SET NIDE VALUE
     id_t pid = getpid();
-    int ret = setpriority(PRIO_PROCESS, pid, -20);
+    int ret = setpriority(PRIO_PROCESS, pid, -19);
     int procRealPrior = getpriority(PRIO_PROCESS, pid);
     printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret,
            procRealPrior);
