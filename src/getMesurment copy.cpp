@@ -6,12 +6,13 @@
 #include <sys/ioctl.h>
 #include <sys/resource.h>
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 
 #include <iostream>
 #include <sstream>
 
-#define NULLRUN_SAMPLE_COUNT 100
+#define SAMPLE_COUNT 300
 #define ADDR_CA 0x4a
 #define ADDR_CB 0x48
 #define ADDR_CC 0x49
@@ -73,43 +74,39 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     write(env.cBus, CURENT_CONFIG_23, 3);
     write(env.cBus, READ_CONF, 1);
 
-    struct timeval start;
-    struct timeval end;
-    struct timeval subStart;
-    struct timeval subEnd;
+    struct timeval start, end;
+    clock_t subStart, subEnd;
     gettimeofday(&start, NULL);
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
-        gettimeofday(&subStart, NULL);
+        subStart = clock();
+        
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
 
-        gettimeofday(&subEnd, NULL);
-        printf("A: %lld; ",
-               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
-                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
-        gettimeofday(&subStart, NULL);
+        subEnd = clock();
+        printf("A: %.0f; ",
+              (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+        subStart = clock();
 
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
 
-        gettimeofday(&subEnd, NULL);
-        printf("B: %lld; ",
-               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
-                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
-        gettimeofday(&subStart, NULL);
+        subEnd = clock();
+        printf("B: %.0f; ",
+              (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+        subStart = clock();
 
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
 
-        gettimeofday(&subEnd, NULL);
-        printf("C: %lld\n",
-               (subEnd.tv_sec * 1000000LL + subEnd.tv_usec) -
-                   (subStart.tv_sec * 1000000LL + subStart.tv_usec));
+        subEnd = clock();
+        printf("C: %.0f\n",
+              (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
     }
     gettimeofday(&end, NULL);
     retRef->startTime = start.tv_sec * 1000LL + start.tv_usec / 1000;
