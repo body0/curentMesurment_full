@@ -90,7 +90,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
                (subEnd.tv_sec * 1000LL + subEnd.tv_usec / 1000) -
                    (subStart.tv_sec * 1000LL + subStart.tv_usec / 1000));
         gettimeofday(&subStart, NULL);
-               
+
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
@@ -178,7 +178,10 @@ int runIO(Common env) {
 }
 
 int main(int argc, char const* argv[]) {
-    if (argc < 2) return 1;
+    if (argc < 2) {
+        printf("End with %d\n", 100);
+        return 100;
+    }
     // SET NIDE VALUE
     id_t pid = getpid();
     int ret = setpriority(PRIO_PROCESS, pid, -20);
@@ -191,7 +194,7 @@ int main(int argc, char const* argv[]) {
     env.sampleCount = atoi(argv[1]);
 
     int retCode = runIO(env);
-    // printf("End with %d\n", retCode);
+    printf("End with %d\n", retCode);
 
     close(env.cBus);
     close(env.vBus);
