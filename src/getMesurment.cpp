@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 
-#define SAMPLE_COUNT 300
+#define NULLRUN_SAMPLE_COUNT 100
 #define ADDR_CA 0x4a
 #define ADDR_CB 0x48
 #define ADDR_CC 0x49
@@ -64,6 +64,39 @@ void outputVal(Common env, int phId, PhData phaseList) {
     }
 }
 
+/* void readIO_nullRun(Common env, int runNum, unsigned char* ) {
+    for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
+        subStart = clock();
+
+        // read in
+        ioctl(env.cBus, I2C_SLAVE, addrA);
+        // write(env.cBus, READ_CONF, 1);
+        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+
+        subEnd = clock();
+        printf("A: %.0f; ",
+               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+        subStart = clock();
+
+        // read voltage
+        // write(env.vBus, READ_CONF, 1);
+        read(env.vBus, &(ret.v[sampleId * 2]), 2);
+
+        subEnd = clock();
+        printf("B: %.0f; ",
+               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+        subStart = clock();
+
+        // read out
+        ioctl(env.cBus, I2C_SLAVE, addrB);
+        // write(env.cBus, READ_CONF, 1);
+        read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+
+        subEnd = clock();
+        printf("C: %.0f\n",
+               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
+    }
+} */
 void readIO(Common env, unsigned char addrA, unsigned char addrB,
             PhData* retRef) {
     PhData ret = *retRef;
@@ -182,7 +215,8 @@ int main(int argc, char const* argv[]) {
     }
     // SET NIDE VALUE
     id_t pid = getpid();
-    int ret = setpriority(PRIO_PROCESS, pid, -19);
+    int ret = nice(-19);
+    // int ret = setpriority(PRIO_PROCESS, pid, -19);
     int procRealPrior = getpriority(PRIO_PROCESS, pid);
     printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret,
            procRealPrior);

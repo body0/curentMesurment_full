@@ -184,7 +184,8 @@ int main(int argc, char const* argv[]) {
     }
     // SET NIDE VALUE
     id_t pid = getpid();
-    int ret = setpriority(PRIO_PROCESS, pid, -20);
+    // int ret = setpriority(PRIO_PROCESS, pid, -20);
+    int ret = nice(-20);
     // printf("PID UID ret: %d %d %d\n", getpid(), getuid(), ret);
 
     Common env;
