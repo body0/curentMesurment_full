@@ -1,3 +1,4 @@
+#!/bin/python3
 from flask import Flask, Response, request
 from flask_cors import CORS
 import json
