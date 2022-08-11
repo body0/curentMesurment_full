@@ -215,12 +215,12 @@ int main(int argc, char const* argv[]) {
     }
     // SET NIDE VALUE
     id_t pid = getpid();
-    int ret = nice(-19);
-    // int ret = setpriority(PRIO_PROCESS, pid, -19);
-    int procRealPrior = getpriority(PRIO_PROCESS, pid);
-    printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret,
-           procRealPrior);
-    if (procRealPrior != -20) {
+    int trgNiceVal = -20;
+    int ret = nice(trgNiceVal);
+    // int ret = setpriority(PRIO_PROCESS, pid, -19); // WHY NOT WORKING (TO DO)
+    // int procRealPrior = getpriority(PRIO_PROCESS, pid);
+    // printf("PID UID ret: %d %d %d %d\n", getpid(), getuid(), ret, procRealPrior);
+    if (ret != trgNiceVal) {
         printf("End with %d\n", 20);
         return 20;
     }
