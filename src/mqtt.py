@@ -32,6 +32,8 @@ def getCurentTopic(id=0):
 def getVoltageTopic(id=0):
     return f'/voltage_now/{id}'
 
+def formatPhaseData(pd, i):
+    f"{pd['curent_chA'][i][0]},{pd['curent_chB'][i][0]},{pd['voltage'][i][0]},{pd['curent_chA'][i][1]},{pd['curent_chB'][i][1]},{pd['voltage'][i][1]}"
 
 def publish(phaseList):
     global client
@@ -39,6 +41,6 @@ def publish(phaseList):
         # print(phaseList[phaseId]["sCount"])
         for sampleId in range(phaseList[phaseId]["sCount"]):
             #print(f"/phase_now/{phaseId}", f"{phaseList[phaseId]['curent_chA'][sampleId]},{phaseList[phaseId]['curent_chB'][sampleId]},{phaseList[phaseId]['voltage'][sampleId]}")
-            client.publish(f"/phase_now/{phaseId}", f"{phaseList[phaseId]['curent_chA'][sampleId]},{phaseList[phaseId]['curent_chB'][sampleId]},{phaseList[phaseId]['voltage'][sampleId]}")
+            client.publish(f"/phase_now/{phaseId}", formatPhaseData (phaseList[phaseId]))
     client.publish("/new_mesurment", "")
 

@@ -36,8 +36,8 @@ def loadData():
                 curentPhase = phaseId
                 
             elif line[0] == '=':
-                splitDataPoint = line[1:].split(',')
-                phaseList[curentPhase]["curent_chA"].append(int(splitDataPoint[0]))
-                phaseList[curentPhase]["curent_chB"].append(int(splitDataPoint[1]))
-                phaseList[curentPhase]["voltage"].append(int(splitDataPoint[2]))
+                parts = line[1:].split(',')
+                phaseList[curentPhase]["curent_chA"].append([int(parts[0]), int(parts[3])])
+                phaseList[curentPhase]["curent_chB"].append([int(parts[1]), int(parts[4])])
+                phaseList[curentPhase]["voltage"].append([int(parts[2]), int(parts[5])])
     return phaseList
