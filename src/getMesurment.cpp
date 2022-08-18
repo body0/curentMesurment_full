@@ -54,7 +54,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
     // clock_t lastTimePoint = phaseList.startPoint;
-    double const msDivConst = CLOCKS_PER_SEC / 1000;
+    double const multConst = 1000;
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
@@ -72,14 +72,11 @@ void outputVal(Common env, int phId, PhData phaseList) {
         // "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut,
         // tSpanV);
         double tIn =
-            (double)(phaseList.timePoints[sampleId][0] - phaseList.startPoint) /
-            msDivConst;
+            (double)(phaseList.timePoints[sampleId][0] - phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         double tV =
-            (double)(phaseList.timePoints[sampleId][1] - phaseList.startPoint) /
-            msDivConst;
+            (double)(phaseList.timePoints[sampleId][1] - phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         double tOut =
-            (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) /
-            msDivConst;
+            (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
                 tV);
     }
@@ -120,9 +117,9 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         ret.timePoints[sampleId][0] = clock();
 
-        subEnd = clock();
+        /* subEnd = clock();
         printf("A: %.0f; ",
-               (double)(subEnd - ret.startPoint) / CLOCKS_PER_SEC * 1000);
+               (double)(subEnd - ret.startPoint) / CLOCKS_PER_SEC * 1000); */
         // subStart = clock();
 
         // read voltage
