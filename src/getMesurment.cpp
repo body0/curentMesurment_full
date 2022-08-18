@@ -120,10 +120,10 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         ret.timePoints[sampleId][0] = clock();
 
-        /* subEnd = clock();
+        subEnd = clock();
         printf("A: %.0f; ",
-               (double)(subEnd - subStart) / CLOCKS_PER_SEC * 1000000);
-        subStart = clock(); */
+               (double)(subEnd - ret.startPoint) / CLOCKS_PER_SEC * 1000);
+        // subStart = clock();
 
         // read voltage
         // write(env.vBus, READ_CONF, 1);
