@@ -68,10 +68,10 @@ void outputVal(Common env, int phId, PhData phaseList) {
         // double tSpanV = phaseList.timePoints[sampleId][0] - phaseList.timePoints[sampleId][1];
         // double tSpanOut = phaseList.timePoints[sampleId][1] - phaseList.timePoints[sampleId][2];
         // fprintf(env.outDesc, "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut, tSpanV);
-        double tIn = (double)(phaseList.timePoints[sampleId][0] - phaseList.startPoint) / msDivConst;
-        double tV = (double)(phaseList.timePoints[sampleId][1] - phaseList.startPoint) / msDivConst;
-        double tOut = (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) / msDivConst;
-        fprintf(env.outDesc, "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tIn, tOut, tV);
+        double tIn = (phaseList.timePoints[sampleId][0] - phaseList.startPoint) / msDivConst;
+        double tV = (phaseList.timePoints[sampleId][1] - phaseList.startPoint) / msDivConst;
+        double tOut = (phaseList.timePoints[sampleId][2] - phaseList.startPoint) / msDivConst;
+        fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut, tV);
     }
 }
 
