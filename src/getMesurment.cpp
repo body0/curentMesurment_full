@@ -65,13 +65,23 @@ void outputVal(Common env, int phId, PhData phaseList) {
                          (unsigned int)phaseList.v[sampleId * 2 + 1];
 
         // double tSpanIn = lastTimePoint - phaseList.timePoints[sampleId][0];
-        // double tSpanV = phaseList.timePoints[sampleId][0] - phaseList.timePoints[sampleId][1];
-        // double tSpanOut = phaseList.timePoints[sampleId][1] - phaseList.timePoints[sampleId][2];
-        // fprintf(env.outDesc, "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut, tSpanV);
-        double tIn = (phaseList.timePoints[sampleId][0] - phaseList.startPoint) / msDivConst;
-        double tV = (phaseList.timePoints[sampleId][1] - phaseList.startPoint) / msDivConst;
-        double tOut = (phaseList.timePoints[sampleId][2] - phaseList.startPoint) / msDivConst;
-        fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut, tV);
+        // double tSpanV = phaseList.timePoints[sampleId][0] -
+        // phaseList.timePoints[sampleId][1]; double tSpanOut =
+        // phaseList.timePoints[sampleId][1] -
+        // phaseList.timePoints[sampleId][2]; fprintf(env.outDesc,
+        // "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut,
+        // tSpanV);
+        double tIn =
+            (double)(phaseList.timePoints[sampleId][0] - phaseList.startPoint) /
+            msDivConst;
+        double tV =
+            (double)(phaseList.timePoints[sampleId][1] - phaseList.startPoint) /
+            msDivConst;
+        double tOut =
+            (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) /
+            msDivConst;
+        fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
+                tV);
     }
 }
 
@@ -178,7 +188,7 @@ int runIO(Common env) {
         write(env.cBus, READ_CONF, 1) < 0 || read(env.cBus, nullBuff, 2) != 2) {
         return -1;
     }
-    readIO_nullRun(env, ADDR_CA, ADDR_CB, NULLRUN_SAMPLE_COUNT); // for std 
+    readIO_nullRun(env, ADDR_CA, ADDR_CB, NULLRUN_SAMPLE_COUNT);  // for std
     /* PhData ph2 = readIOGen(env, ADDR_CA, ADDR_CB);  // SWITCHED !!
     PhData ph1 = readIOGen(env, ADDR_CC, ADDR_CA);  // SWITCHED !!
     PhData ph3 = readIOGen(env, ADDR_CB, ADDR_CC); */
