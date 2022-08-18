@@ -54,7 +54,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
     // clock_t lastTimePoint = phaseList.startPoint;
-    double const multConst = 1000;
+    double const multConst = 1;
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
@@ -79,6 +79,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
             (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
                 tV);
+        printf(":%f,%f,%f,%f\n", phaseList.timePoints[sampleId][0], phaseList.timePoints[sampleId][1], phaseList.timePoints[sampleId][2], phaseList.startPoint);
     }
 }
 
