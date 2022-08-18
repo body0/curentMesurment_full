@@ -43,8 +43,8 @@ def loadData():
                 phaseList[curentPhase]["curent_chA"].append(int(parts[0]))
                 phaseList[curentPhase]["curent_chB"].append(int(parts[1]))
                 phaseList[curentPhase]["voltage"].append(int(parts[2]))
-                phaseList[curentPhase]["t_curent_chA"].append(int(parts[3]))
-                phaseList[curentPhase]["t_curent_chB"].append(int(parts[4]))
-                phaseList[curentPhase]["t_voltage"].append(int(parts[5]))
+                phaseList[curentPhase]["t_curent_chA"].append(float(parts[3]))
+                phaseList[curentPhase]["t_curent_chB"].append(float(parts[4]))
+                phaseList[curentPhase]["t_voltage"].append(float(parts[5]))
 
     return phaseList
