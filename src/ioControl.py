@@ -34,11 +34,11 @@ def writeGPIO(portID, value):
 def parseValuesInList(valList):
     ret = []
     for pair in valList:
-        shiftedNum = pair[0] >> 4
+        shiftedNum = pair >> 4
         signNum = shiftedNum
         if (signNum > 0x07FF):
             signNum = signNum - 0x1000
-        ret.append([signNum, pair[1]])
+        ret.append(signNum)
     return ret
  
 def mesure():
