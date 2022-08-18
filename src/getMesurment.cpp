@@ -54,7 +54,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
     // clock_t lastTimePoint = phaseList.startPoint;
-    double const multConst = 1;
+    double const multConst = 1000;
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
@@ -82,11 +82,11 @@ void outputVal(Common env, int phId, PhData phaseList) {
             CLOCKS_PER_SEC * multConst;
         fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
                 tV);
-        printf(":%f,%f,%f,%f\n",
+        /* printf(":%f,%f,%f,%f\n",
                (double)phaseList.timePoints[sampleId][0] / CLOCKS_PER_SEC,
                (double)phaseList.timePoints[sampleId][1] / CLOCKS_PER_SEC,
                (double)phaseList.timePoints[sampleId][2] / CLOCKS_PER_SEC,
-               (double)phaseList.startPoint / CLOCKS_PER_SEC);
+               (double)phaseList.startPoint / CLOCKS_PER_SEC); */
     }
 }
 
@@ -115,7 +115,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     struct timeval start, end;
     clock_t subStart, subEnd;
     gettimeofday(&start, NULL);
-    ret.startPoint = clock();
+    retRef->startPoint = clock();
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         /* subStart = clock(); */
 
