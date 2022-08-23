@@ -8,11 +8,11 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+
 #include <chrono>
 #include <ctime>
-#include <ratio>
-
 #include <iostream>
+#include <ratio>
 #include <sstream>
 
 #define NULLRUN_SAMPLE_COUNT 100
@@ -30,12 +30,14 @@
 #define SPEED_CONFIG 0x83
 // #define SPEED_CONFIG 0xA0
 
-const char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, SPEED_CONFIG};
-const char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, SPEED_CONFIG};
-const char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, SPEED_CONFIG};
-const char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
-const char READ_CONF[] = {READ_REG};
+const unsigned char VOLTAGE_CONFIG[] = {CONFIG_REG, 0x00, SPEED_CONFIG};
+const unsigned char CURENT_CONFIG_01[] = {CONFIG_REG, 0x08, SPEED_CONFIG};
+const unsigned char CURENT_CONFIG_23[] = {CONFIG_REG, 0x38, SPEED_CONFIG};
+const unsigned char NULL_CONFIG[] = {CONFIG_REG, 0x1, 0x83};
+const unsigned char READ_CONF[] = {READ_REG};
 
+typedef std::chrono::steady_clock SCLC;
+typedef std::chrono::time_point<SCLC> TSS;
 typedef struct {
     FILE* outDesc;
     int cBus;
@@ -47,8 +49,8 @@ typedef struct {
     unsigned char* const cIn;
     unsigned char* const cOut;
     unsigned char* const v;
-    steady_clock::time_point (*const timePoints)[3];
-    steady_clock::time_point startPoint;
+    TSS (*const timePoints)[3];
+    TSS startPoint;
     long long int startTime;
     long long int endTime;
 } PhData;
@@ -57,7 +59,7 @@ void outputVal(Common env, int phId, PhData phaseList) {
     fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
     // clock_t lastTimePoint = phaseList.startPoint;
-    double const multConst = 1000;
+    // double const multConst = 1000;   
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         unsigned int cIn = (((unsigned int)phaseList.cIn[sampleId * 2]) << 8) +
                            (unsigned int)phaseList.cIn[sampleId * 2 + 1];
@@ -75,18 +77,27 @@ void outputVal(Common env, int phId, PhData phaseList) {
         // "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut,
         // tSpanV);
         // double tIn =
-        //     (double)(phaseList.timePoints[sampleId][0] - phaseList.startPoint) /
-        //     CLOCKS_PER_SEC * multConst;
+        //     (double)(phaseList.timePoints[sampleId][0] -
+        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         // double tV =
-        //     (double)(phaseList.timePoints[sampleId][1] - phaseList.startPoint) /
-        //     CLOCKS_PER_SEC * multConst;
+        //     (double)(phaseList.timePoints[sampleId][1] -
+        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
         // double tOut =
-        //     (double)(phaseList.timePoints[sampleId][2] - phaseList.startPoint) /
-        //     CLOCKS_PER_SEC * multConst;
+        //     (double)(phaseList.timePoints[sampleId][2] -
+        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
 
-        double tIn =  duration_cast<duration<double>>(phaseList.timePoints[sampleId][0] - phaseList.startPoint).count();
-        double tV = duration_cast<duration<double>>(phaseList.timePoints[sampleId][1] - phaseList.startPoint).count();
-        double tOut = duration_cast<duration<double>>(phaseList.timePoints[sampleId][2] - phaseList.startPoint).count();
+        double tIn =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                phaseList.timePoints[sampleId][0] - phaseList.startPoint)
+                .count();
+        double tV =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                phaseList.timePoints[sampleId][1] - phaseList.startPoint)
+                .count();
+        double tOut =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                phaseList.timePoints[sampleId][2] - phaseList.startPoint)
+                .count();
         fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
                 tV);
         /* printf(":%f,%f,%f,%f\n",
@@ -123,7 +134,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     struct timeval start, end;
     // steady_clock::time_point subStart, subEnd;
     gettimeofday(&start, NULL);
-    retRef->startPoint = steady_clock::now();
+    retRef->startPoint = SCLC::now();
     for (int sampleId = 0; sampleId < env.sampleCount; sampleId++) {
         /* subStart = clock(); */
 
@@ -131,7 +142,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
-        ret.timePoints[sampleId][0] = steady_clock::now();();
+        ret.timePoints[sampleId][0] = SCLC::now();
 
         /* subEnd = clock();
         printf("A: %.0f; ",
@@ -141,7 +152,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         // read voltage
         // write(env.vBus, READ_CONF, 1);
         read(env.vBus, &(ret.v[sampleId * 2]), 2);
-        ret.timePoints[sampleId][1] = steady_clock::now();();
+        ret.timePoints[sampleId][1] = SCLC::now();
 
         /* subEnd = clock();
         printf("B: %.0f; ",
@@ -152,7 +163,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
         read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
-        ret.timePoints[sampleId][2] = steady_clock::now();();
+        ret.timePoints[sampleId][2] = SCLC::now();
 
         /* subEnd = clock();
         printf("C: %.0f\n",
@@ -171,8 +182,9 @@ PhData readIOGen(Common env, unsigned char addrA, unsigned char addrB) {
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
     unsigned char* rec_v =
         (unsigned char*)malloc(env.sampleCount * 2 * sizeof(char));
-    steady_clock::time_point(*timePoints)[3] =
-        (steady_clock::time_point(*)[3])malloc(env.sampleCount * sizeof(steady_clock::time_point[3]));
+    TSS(*timePoints)[3] =
+        (TSS(*)[3])malloc(
+            env.sampleCount * sizeof(TSS[3]));
     PhData ret = {rec_cIn, rec_cOut, rec_v, timePoints};
     readIO(env, addrA, addrB, &ret);
     return ret;
@@ -235,7 +247,7 @@ int main(int argc, char const* argv[]) {
         return 10;
     }
     // SET NIDE VALUE
-    id_t pid = getpid();
+    // id_t pid = getpid();
     int trgNiceVal = -20;
     int ret = nice(trgNiceVal);
     // int ret = setpriority(PRIO_PROCESS, pid, -19); // WHY NOT WORKING (TO DO)
