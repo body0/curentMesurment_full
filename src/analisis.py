@@ -211,6 +211,7 @@ def shiftData(bl):
                 "period": period,
                 "shift": baseShift
             }
+    return sbl
         
             
 def getPhasePow(sPhase):    
