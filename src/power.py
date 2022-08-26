@@ -17,7 +17,7 @@ def getPowerAndMeta():
     while (True):
         phaseList = ioControl.mesure()
         sbl = analisis.shiftData([phaseList])
-        if (sbl != None): return
+        if (sbl != None): break
     pbl = analisis.getBatchPow(sbl)
     return (pbl, sbl, phaseList)
 
