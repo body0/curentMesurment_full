@@ -136,7 +136,7 @@ def shiftData(bl):
     # cutTail(bl, 100)
     # cutTail(bl, 50)
     # shiftTimeData(bl)
-    PHASE_V_SHIFT = [-0.333333333, 0.333333333, 0]
+    PHASE_V_SHIFT = [0.333333333, -0.333333333, 0]
 
     sbl = []
     for batchId, batch in enumerate(bl):
@@ -193,7 +193,7 @@ def shiftData(bl):
             sPhase["to"] = sPhase["to"][outSkip_s:outSkip_e]       
             sPhase["vv"] = sPhase["vv"][vSkip_s:vSkip_e]
             sPhase["tv"] = sPhase["tv"][vSkip_s:vSkip_e]
-            # print(f"RANGE: {inSkip_s} {inSkip_e} | {outSkip_s} {outSkip_e} | {vSkip_s} {vSkip_e} \t LEN: {len(sPhase['ti'])} {len(sPhase['to'])} {len(sPhase['tv'])} \t ({startXVal}-{endXVal})")
+            print(f"RANGE: {inSkip_s} {inSkip_e} | {outSkip_s} {outSkip_e} | {vSkip_s} {vSkip_e} \t LEN: {len(sPhase['ti'])} {len(sPhase['to'])} {len(sPhase['tv'])} \t ({startXVal}-{endXVal})")
 
             sPhase["meta"] = {
                 "min_time": min(sPhase["tv"][0], sPhase["ti"][0], sPhase["to"][0]),
