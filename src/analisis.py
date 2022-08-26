@@ -1,6 +1,4 @@
 from scipy import optimize
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 import math
 import numpy as np
 import copy
