@@ -167,6 +167,8 @@ def shiftData(bl):
             cShift = PHASE_V_SHIFT[phaseId]
             cFullShift = cShift*period
 
+            if (len(cross) < 8):
+                return None
             startXVal = cross[2]
             endXVal = cross[-3 if len(cross)%2 == 0 else -4]       
 
