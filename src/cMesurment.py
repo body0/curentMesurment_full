@@ -26,12 +26,12 @@ def loadData():
                 phaseId = int(splitParam[0])
                 while phaseId+1 > len(phaseList):
                     phaseList.append({
-                        "curent_chA": [],
-                        "curent_chB": [],
-                        "voltage": [],
-                        "t_curent_chA": [],
-                        "t_curent_chB": [],
-                        "t_voltage": [],
+                        "ci": [],
+                        "co": [],
+                        "vv": [],
+                        "ti": [],
+                        "to": [],
+                        "tv": [],
                         "sTime": int(splitParam[2]),
                         "eTime": int(splitParam[3]),
                         "sCount": int(splitParam[1])
@@ -40,11 +40,11 @@ def loadData():
                 
             elif line[0] == '=':
                 parts = line[1:].split(',')
-                phaseList[curentPhase]["curent_chA"].append(int(parts[0]))
-                phaseList[curentPhase]["curent_chB"].append(int(parts[1]))
-                phaseList[curentPhase]["voltage"].append(int(parts[2]))
-                phaseList[curentPhase]["t_curent_chA"].append(float(parts[3]))
-                phaseList[curentPhase]["t_curent_chB"].append(float(parts[4]))
-                phaseList[curentPhase]["t_voltage"].append(float(parts[5]))
+                phaseList[curentPhase]["ci"].append(int(parts[0]))
+                phaseList[curentPhase]["co"].append(int(parts[1]))
+                phaseList[curentPhase]["vv"].append(int(parts[2]))
+                phaseList[curentPhase]["ti"].append(float(parts[3]))
+                phaseList[curentPhase]["to"].append(float(parts[4]))
+                phaseList[curentPhase]["tv"].append(float(parts[5]))
 
     return phaseList

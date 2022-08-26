@@ -113,8 +113,8 @@ def _evalRules(fullPowerList):
                      
         if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == " ":
             minTrigetTime = datetime.now() - datetime.timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
-            inPow = fullPowerList[0]
-            outPow = fullPowerList[1]
+            inPow = fullPowerList['ri']
+            outPow = fullPowerList['ro']
             diff = inPow - outPow
             if rId == activeRule and  rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)

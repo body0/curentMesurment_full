@@ -57,19 +57,19 @@ def boilerRuleSet():
 def powerOutputNow():
     powerList = power.getPower()
     return json.dumps({
-        "phase_EA": powerList[0][1],
-        "phase_EB": powerList[1][1],
-        "phase_EC": powerList[2][1],
-        "phase_HA": powerList[0][0],
-        "phase_HB": powerList[1][0],
-        "phase_HC": powerList[2][0],
+        "phase_EA": powerList[0]['ai'],
+        "phase_EB": powerList[1]['ai'],
+        "phase_EC": powerList[2]['ai'],
+        "phase_HA": powerList[0]['ao'],
+        "phase_HB": powerList[1]['ao'],
+        "phase_HC": powerList[2]['ao'],
         
-        "phase_EA_pfac": powerList[0][5],
-        "phase_EB_pfac": powerList[1][5],
-        "phase_EC_pfac": powerList[2][5],
-        "phase_HA_pfac": powerList[0][4],
-        "phase_HB_pfac": powerList[1][4],
-        "phase_HC_pfac": powerList[2][4]
+        "phase_EA_pfac": powerList[0]['fi'],
+        "phase_EB_pfac": powerList[1]['fi'],
+        "phase_EC_pfac": powerList[2]['fi'],
+        "phase_HA_pfac": powerList[0]['fo'],
+        "phase_HB_pfac": powerList[1]['fo'],
+        "phase_HC_pfac": powerList[2]['fo']
     }) 
 
 app.run(host='0.0.0.0', port=usedPort)

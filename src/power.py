@@ -11,12 +11,13 @@ import ruleEvaluator
 
 
 def getPower():
+    return getPowerAndMeta()[0][0]
+
+def getPowerAndMeta():
     phaseList = ioControl.mesure()
-    batch = analisis.genBatch(phaseList)
-    sBatch = analisis.getShiftedBatch(batch)
-    ssBatch = analisis.scaleBatchToReal(sBatch)
-    powerList = analisis.getAvrgPower(ssBatch)
-    return powerList
+    sbl = analisis.shiftData(phaseList)
+    pbl = analisis.getBatchPow(sbl)
+    return (pbl, sbl, phaseList)
 
 
 watcherPeriod = 40
@@ -82,15 +83,12 @@ def run_continuously(interval=1):
 def watherTick():
     global pMesScheduler, watcherPeriod, watcherRuning, curentTimer
     print("Pow, TICK")
-    # pow = getPower()
+    (pbl, sbl, phaseList) = getPowerAndMeta()
+    pl = pbl[0]
     phaseList = ioControl.mesure()
-    batch = analisis.genBatch(phaseList)
-    sBatch = analisis.getShiftedBatch(batch)
-    ssBatch = analisis.scaleBatchToReal(sBatch)
-    pow = analisis.getAvrgPower(ssBatch)
-    db.tryAddPow(pow)
+    db.tryAddPow(pl)
     mqtt.publish(phaseList)
-    ruleEvaluator.evalRules(analisis.getAvrgFullAltPower(pow))
+    ruleEvaluator.evalRules(analisis.getPowMeta(pl))
     """ if watcherRuning:
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
         pMesScheduler.run() """

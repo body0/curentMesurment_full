@@ -17,10 +17,10 @@ def addPowRes(powerList):
     global conn
     cur = conn.cursor()
     for pPhaseId in range(len(powerList)):
-        powA = powerList[pPhaseId][0]
-        powB = powerList[pPhaseId][1]
-        powAalt = powerList[pPhaseId][2]
-        powBalt = powerList[pPhaseId][3]
+        powA = powerList[pPhaseId]['ai']
+        powB = powerList[pPhaseId]['ao']
+        powAalt = powerList[pPhaseId]['ri']
+        powBalt = powerList[pPhaseId]['ro']
         cur.execute('insert into avrg_pow (phId, powA, powB,  powAalt, powBalt) values (%s, %s, %s, %s, %s)',
                     [pPhaseId, powA, powB, powAalt, powBalt])
     conn.commit()
