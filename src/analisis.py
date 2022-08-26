@@ -232,7 +232,7 @@ def getPhasePow(sPhase):
         'ai': iAvrgPow,
         'ao': oAvrgPow,
         'ri': iRealPow,
-        'io': oRealPow,
+        'ro': oRealPow,
         'fi': iPowFactor,
         'fo': oPowFactor
     }
