@@ -217,7 +217,7 @@ def shiftData(bl):
 def getPhasePow(sPhase):    
     shift = sPhase['meta']['shift']
     freq = 1/sPhase['meta']['period']
-    x_pow = np.linspace(sPhase["tv"][0], sPhase["tv"][-1], len(sPhase["tv"])*100)
+    x_pow = np.linspace(sPhase["tv"][0], sPhase["tv"][-1], len(sPhase["tv"])*16)
     i_Pow = [getPower(sPhase["ti"], sPhase["ci"], freq, shift, x) * 1.414 for x in x_pow]
     o_Pow = [getPower(sPhase["to"], sPhase["co"], freq, shift, x) * 1.414 for x in x_pow]
     
