@@ -47,9 +47,9 @@ def mesure():
     phaseList = cMesurment.getPhaseList()
     
     for i in range(len(phaseList)):
-        phaseList[i]["curent_chA"] = parseValuesInList(phaseList[i]["curent_chA"])
-        phaseList[i]["curent_chB"] = parseValuesInList(phaseList[i]["curent_chB"])
-        phaseList[i]["voltage"] = parseValuesInList(phaseList[i]["voltage"])
+        phaseList[i]["ci"] = parseValuesInList(phaseList[i]["ci"])
+        phaseList[i]["co"] = parseValuesInList(phaseList[i]["co"])
+        phaseList[i]["vv"] = parseValuesInList(phaseList[i]["vv"])
         phaseList[i]["diffTime"] = phaseList[i]["eTime"] - phaseList[i]["sTime"]
 
     print(f"# EXEC TIME: {phaseList[0]['diffTime']}; {phaseList[1]['diffTime']}; {phaseList[2]['diffTime']}; ({phaseList[i]['sCount']})")
