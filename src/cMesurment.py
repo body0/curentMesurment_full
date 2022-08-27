@@ -40,8 +40,10 @@ def loadData():
                 
             elif line[0] == '=':
                 parts = line[1:].split(',')
-                phaseList[curentPhase]["ci"].append(int(parts[0]))
-                phaseList[curentPhase]["co"].append(int(parts[1]))
+                phaseList[curentPhase]["ci"].append(int(parts[1])) # TMP FIX !!!!!!!!
+                phaseList[curentPhase]["co"].append(int(parts[0])) # TMP FIX !!!!!!!! 
+                # phaseList[curentPhase]["ci"].append(int(parts[0]))
+                # phaseList[curentPhase]["co"].append(int(parts[1]))
                 phaseList[curentPhase]["vv"].append(int(parts[2]))
                 phaseList[curentPhase]["ti"].append(float(parts[3]))
                 phaseList[curentPhase]["to"].append(float(parts[4]))

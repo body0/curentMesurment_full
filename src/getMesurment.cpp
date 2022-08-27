@@ -69,23 +69,6 @@ void outputVal(Common env, int phId, PhData phaseList) {
         unsigned int v = (((unsigned int)phaseList.v[sampleId * 2]) << 8) +
                          (unsigned int)phaseList.v[sampleId * 2 + 1];
 
-        // double tSpanIn = lastTimePoint - phaseList.timePoints[sampleId][0];
-        // double tSpanV = phaseList.timePoints[sampleId][0] -
-        // phaseList.timePoints[sampleId][1]; double tSpanOut =
-        // phaseList.timePoints[sampleId][1] -
-        // phaseList.timePoints[sampleId][2]; fprintf(env.outDesc,
-        // "=%u,%u,%u,%.0f,%.0f,%.0f\n", cIn, cOut, v, tSpanIn, tSpanOut,
-        // tSpanV);
-        // double tIn =
-        //     (double)(phaseList.timePoints[sampleId][0] -
-        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
-        // double tV =
-        //     (double)(phaseList.timePoints[sampleId][1] -
-        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
-        // double tOut =
-        //     (double)(phaseList.timePoints[sampleId][2] -
-        //     phaseList.startPoint) / CLOCKS_PER_SEC * multConst;
-
         double tIn =
             std::chrono::duration_cast<std::chrono::microseconds>(
                 phaseList.timePoints[sampleId][0] - phaseList.startPoint)
@@ -100,11 +83,8 @@ void outputVal(Common env, int phId, PhData phaseList) {
                 .count();
         fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", cIn, cOut, v, tIn, tOut,
                 tV);
-        /* printf(":%f,%f,%f,%f\n",
-               (double)phaseList.timePoints[sampleId][0] / CLOCKS_PER_SEC,
-               (double)phaseList.timePoints[sampleId][1] / CLOCKS_PER_SEC,
-               (double)phaseList.timePoints[sampleId][2] / CLOCKS_PER_SEC,
-               (double)phaseList.startPoint / CLOCKS_PER_SEC); */
+        //  fprintf(env.outDesc, "=%u,%u,%u,%f,%f,%f\n", 0, cOut, v, tIn, tOut,
+        //         tV);
     }
 }
 

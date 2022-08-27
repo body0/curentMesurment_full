@@ -33,8 +33,8 @@ def getVoltageTopic(id=0):
     return f'/voltage_now/{id}'
 
 def formatPhaseData(pd, i):
-    # return f"{pd['ci'][i]},{pd['co'][i]},{pd['vv'][i]},{pd['ti'][i]},{pd['to'][i]},{pd['tv'][i]}"
-    return f"{0},{pd['co'][i]},{pd['vv'][i]},{pd['ti'][i]},{pd['to'][i]},{pd['tv'][i]}"
+    return f"{pd['ci'][i]},{pd['co'][i]},{pd['vv'][i]},{pd['ti'][i]},{pd['to'][i]},{pd['tv'][i]}"
+    # return f"{0},{pd['co'][i]},{pd['vv'][i]},{pd['ti'][i]},{pd['to'][i]},{pd['tv'][i]}"
 
 def publish(phaseList):
     global client
