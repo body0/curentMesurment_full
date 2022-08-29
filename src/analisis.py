@@ -46,6 +46,7 @@ def parseData(path):
 def scaleData(data):
     for batch in data:
         for phase in batch:
+            print(phase)
             phase["ci"] = list(map(lambda a: a / 0x800 * 25.125, phase["ci"]))
             phase["co"] = list(map(lambda a: a / 0x800 * 25.125, phase["co"]))
             phase["vv"] = list(map(lambda a: a * 0.0008671875, phase["vv"]))
