@@ -14,7 +14,6 @@ def parseData(path):
             break
         if line[0] == '#':
             pass
-            # print(line, end="")
         elif line[0] == '>':
             splitByBatchId = line[1:].split('|')
             indexBatch = int(splitByBatchId[0]) 
@@ -46,7 +45,6 @@ def parseData(path):
 def scaleData(data):
     for batch in data:
         for phase in batch:
-            print(phase)
             phase["ci"] = list(map(lambda a: a / 0x800 * 25.125, phase["ci"]))
             phase["co"] = list(map(lambda a: a / 0x800 * 25.125, phase["co"]))
             phase["vv"] = list(map(lambda a: a * 0.0008671875, phase["vv"]))
@@ -198,7 +196,6 @@ def shiftData(bl):
     sbl = []
     for batchId, batch in enumerate(bl):
         sbl.append([])
-        print(f"({batchId})")
         for phaseId, phase in enumerate(batch):
             phase = bl[batchId][phaseId]
             sbl[batchId].append({
@@ -251,7 +248,6 @@ def shiftData(bl):
             sPhase["to"] = sPhase["to"][outSkip_s:outSkip_e]       
             sPhase["vv"] = sPhase["vv"][vSkip_s:vSkip_e]
             sPhase["tv"] = sPhase["tv"][vSkip_s:vSkip_e]
-            print(f"RANGE: {inSkip_s} {inSkip_e} | {outSkip_s} {outSkip_e} | {vSkip_s} {vSkip_e} \t LEN: {len(sPhase['ti'])} {len(sPhase['to'])} {len(sPhase['tv'])} \t ({startXVal}-{endXVal})")
             
             sPhase["meta"] = {
                 "min_time": min(sPhase["tv"][0], sPhase["ti"][0], sPhase["to"][0]),
@@ -298,7 +294,7 @@ def getPhasePow(sPhase):
 
     iAvrgPow = getSRM(i_cur) * 230
     oAvrgPow = getSRM(o_cur) * 230
-    iRealPow = getAvrg(i_Pow) * 230
+    iRealPow = getAvrg(i_Pow) * -230 # !!! positive fro production
     oRealPow = getAvrg(o_Pow) * 230
     iPowFactor = iRealPow / iAvrgPow if iAvrgPow != 0 else 0 
     oPowFactor = oRealPow / oAvrgPow if oAvrgPow != 0 else 0
