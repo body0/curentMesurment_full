@@ -177,7 +177,9 @@ def getSinEquivalent(x, y):
             pSum = abs(y[i]) + abs(y[i+1])
             nVal = x[i]*(abs(y[i+1])/pSum) + x[i+1]*(abs(y[i])/pSum)
             cross.append(nVal)
-            
+    
+    if len(cross) < 8:
+        return None        
     spaceBetweanCross = getDiffList(cross)[1:]
     frequencyGuess = 0.5 / getAvrg(spaceBetweanCross)
     phaseShift = 0
@@ -212,6 +214,8 @@ def shiftData(bl):
             sPhase = sbl[batchId][-1]
             
             voltageSinData = getSinEquivalent( phase["tv"], phase["vv"])
+            if (voltageSinData == None):
+                return None
             x_sin = voltageSinData[0]
             y_sin = voltageSinData[1]
             simParam=voltageSinData[2]
