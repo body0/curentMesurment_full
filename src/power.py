@@ -14,7 +14,9 @@ def getPower():
     return getPowerAndMeta()[0][0]
 
 def getPowerAndMeta():
-    while (True):
+    tries = 3
+    while (tries > 0):
+        tries-=1
         phaseList = ioControl.mesure()
         analisis.scaleData([phaseList])
         sbl = analisis.shiftData([phaseList])

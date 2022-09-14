@@ -37,6 +37,7 @@ def _parseRule(rule):
     elif cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
         parsedVal = {
             "powVal": pld["powVal"],
+            "phase": pld["phase"],
             "holdFor_H": pld["holdFor_H"],
             "holdFor_M": pld["holdFor_M"]
         }
@@ -74,6 +75,7 @@ def _exportRule(rule):
     elif cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
         parsedVal = {
             "powVal": pld["powVal"],
+            "phase": pld["phase"],
             "holdFor_H": pld["holdFor_H"],
             "holdFor_M": pld["holdFor_M"]
         }
@@ -111,11 +113,11 @@ def _evalRules(fullPowerList):
             if inRange(pld["startH"], pld["startM"], pld["endH"], pld["endM"]):
                 return (rId, resVal)
                      
-        if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == " ":
+        if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
             minTrigetTime = datetime.now() - datetime.timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
-            inPow = fullPowerList['ri']
-            outPow = fullPowerList['ro']
-            diff = inPow - outPow
+            trgPhase = pld["phase"] -1
+            inPow = fullPowerList['data'][trgPhase]["ai"]
+            outPow = fullPowerList['data'][trgPhase]["ro"]
             if rId == activeRule and  rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)
             if cType == "powInON":
@@ -125,10 +127,10 @@ def _evalRules(fullPowerList):
                 if pld["powVal"] > inPow:
                     return (rId, resVal)
             elif cType == "powDiffON":
-                if pld["powVal"] < diff:
+                if pld["powVal"] < outPow:
                     return (rId, resVal)
             elif cType == "powDiffOFF":
-                if pld["powVal"] > diff:
+                if pld["powVal"] > outPow:
                     return (rId, resVal)
     activeRule = -1 #TODO (bad flow)
     return (-1, False)

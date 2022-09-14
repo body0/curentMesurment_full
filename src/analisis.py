@@ -253,6 +253,9 @@ def shiftData(bl):
             sPhase["vv"] = sPhase["vv"][vSkip_s:vSkip_e]
             sPhase["tv"] = sPhase["tv"][vSkip_s:vSkip_e]
             
+            if (len(sPhase["tv"]) * len(sPhase["ti"]) * len(sPhase["to"]) == 0):
+                return None
+            
             sPhase["meta"] = {
                 "min_time": min(sPhase["tv"][0], sPhase["ti"][0], sPhase["to"][0]),
                 "max_time": max(sPhase["tv"][-1], sPhase["ti"][-1], sPhase["to"][-1]),
@@ -330,11 +333,15 @@ def getPowMeta(pl):
     ret = {
         'ri':  0,
         'ro': 0,
+        'ai':  0,
+        'ao': 0,
         'data': pl
     }
     for pId in range(3):
         ret['ri'] += pl[pId]['ri']
         ret['ro'] += pl[pId]['ro']
+        ret['ai'] += pl[pId]['ai']
+        ret['ao'] += pl[pId]['ao']
     return ret
              
 
