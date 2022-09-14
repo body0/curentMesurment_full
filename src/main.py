@@ -1,13 +1,19 @@
 #!/bin/python3
-from flask import Flask, Response, request
-from flask_cors import CORS
+
+
 import json
 import os
+import asyncio
+import envVar
+import uvicorn
+
 import ioControl
 import power
 import ruleEvaluator
 import db
 import mqtt
+import api
+
 
 
 print("INIT, start init")
@@ -15,68 +21,28 @@ db.connectToDb()
 mqtt.init()
 power.startWatcher()
 
-usedPort = 3000 
-# if (os.environ.get('ENV') == "PROD"): 
-#     usedPort = 3100
      
-print(f"INIT, start api on {usedPort}")
-app = Flask(__name__)
-CORS(app)
+print(f"INIT, start api on {envVar.API_PORT}")
 
-@app.route('/api/', methods=['GET'])
-def testApi():
-    return f'Hallo; port:{usedPort}'
 
-@app.route('/api/boiler/set', methods=['POST'])
-def boilerSet():
-    content = request.get_json()
-    ruleEvaluator.setEnableEvaluation(not content['overideActive'])
-    if content['overideActive']:
-        ioControl.setBoilerState(content['state'])
-    return json.dumps({
-        "state": ioControl.getBoilerState(),
-        "overideActive": not ruleEvaluator.getEnableEvaluetion()
-    })
+# app.run(host='0.0.0.0', port=usedPort)
 
-@app.route('/api/boiler/get', methods=['POST'])
-def boilerGet():
-    return json.dumps({
-        "state": ioControl.getBoilerState(),
-        "overideActive": not ruleEvaluator.getEnableEvaluetion(),
-        "controlList": ruleEvaluator.exportRuleList()
-    })
+# def startServer():
+#     done, pending = await asyncio.wait(
+#         [
+#             create_webserver(8000),
+#             create_webserver(8001),
+#         ],
+#         return_when=asyncio.FIRST_COMPLETED,
+#     )
+
+
+async def startServer():
+    config = uvicorn.Config(api.getRoute(), port=envVar.API_PORT, log_level="info")
+    server = uvicorn.Server(config)
+    await server.serve()
+
+if __name__ == "__main__":
+    asyncio.run(startServer())
     
-@app.route('/api/boiler/rule/set', methods=['POST'])
-def boilerRuleSet():
-    content = request.get_json()
-    ruleEvaluator.setRuleLis(content["controlList"])
-    return json.dumps({
-    })
-
-@app.route('/api/power/outputNow', methods=['POST'])
-def powerOutputNow():
-    powerList = power.getPower()
-    return json.dumps({
-        # "phase_EA": powerList[0]['ai'],
-        # "phase_EB": powerList[1]['ai'],
-        # "phase_EC": powerList[2]['ai'],
-        # "phase_HA": powerList[0]['ao'],
-        # "phase_HB": powerList[1]['ao'],
-        # "phase_HC": powerList[2]['ao'],
-        
-        "phase_EA": powerList[0]['ri'],
-        "phase_EB": powerList[1]['ri'],
-        "phase_EC": powerList[2]['ri'],
-        "phase_HA": powerList[0]['ro'],
-        "phase_HB": powerList[1]['ro'],
-        "phase_HC": powerList[2]['ro'],
-        
-        "phase_EA_pfac": powerList[0]['fi'],
-        "phase_EB_pfac": powerList[1]['fi'],
-        "phase_EC_pfac": powerList[2]['fi'],
-        "phase_HA_pfac": powerList[0]['fo'],
-        "phase_HB_pfac": powerList[1]['fo'],
-        "phase_HC_pfac": powerList[2]['fo']
-    }) 
-
-app.run(host='0.0.0.0', port=usedPort)
+    

@@ -1,7 +1,8 @@
 import os.path
 import cMesurment
+import envVar
 
-BOILER_GPIO_ID = 17
+
 
 curentBoilerState = False
 
@@ -12,8 +13,7 @@ def getBoilerState():
 
 def setBoilerState(targetState):
     global curentBoilerState
-    # logger.log(f'boiler set to: {targetState}')
-    writeGPIO(BOILER_GPIO_ID, not targetState)
+    writeGPIO(envVar.BOILER_GPIO_ID, not targetState)
     curentBoilerState = targetState
 
 def setGPIO(portID):
@@ -26,7 +26,6 @@ def writeGPIO(portID, value):
     if not os.path.isdir(f"/sys/class/gpio/gpio{portID}"):
        setGPIO(portID) 
     with open(f"/sys/class/gpio/gpio{portID}/value", 'w') as file:
-        #print(f"/sys/class/gpio/gpio{portID}/value")
         file.write('1' if value else '0')
 
 
@@ -44,7 +43,7 @@ def parseValuesInList(valList):
 def mesure():
     print('START mesurment')
     #phaseList = mesureAllPhase()
-    phaseList = cMesurment.getPhaseList()
+    phaseList = cMesurment.getPhaseList(envVar.DATA_POINT_TAKEN)
     
     for i in range(len(phaseList)):
         phaseList[i]["ci"] = parseValuesInList(phaseList[i]["ci"])
