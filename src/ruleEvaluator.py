@@ -92,7 +92,7 @@ def evalRules(fullPowerList):
     if not enableEvaluation:
         return
     (rId, res) = _evalRules(fullPowerList)
-    print(f"[acepted rule]: {rId}, {res}")
+    print(f"[rule result]: {rId}, {res}")
     if rId == -1:
         return res
     activeRule = rId
@@ -120,6 +120,7 @@ def _evalRules(fullPowerList):
             outPow = fullPowerList['data'][trgPhase]["ro"]
             if rId == activeRule and rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)
+            print(f"{pld['powVal']}, {inPow}")
             if cType == "powInON":
                 if pld["powVal"] < inPow:
                     return (rId, resVal)
