@@ -1,12 +1,12 @@
-from fastapi import Body, FastAPI, status, Request, WebSocket, Depends
+from fastapi import Body, FastAPI, status, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 import json
 import os
 import ioControl
 import power
 import ruleEvaluator
-
 
 
 
@@ -22,7 +22,7 @@ app.add_middleware(
 @app.route('/api', methods=['GET'])
 def testApi(request: Request):
     print('Hallo api route')
-    return 'Hallo'
+    return Response(content="Hello", media_type="application/json")
 
 @app.route('/api/boiler/set', methods=['POST'])
 async def boilerSet(request: Request):
@@ -30,14 +30,14 @@ async def boilerSet(request: Request):
     ruleEvaluator.setEnableEvaluation(not content['overideActive'])
     if content['overideActive']:
         ioControl.setBoilerState(content['state'])
-    return json.dumps({
+    return JSONResponse(content={
         "state": ioControl.getBoilerState(),
         "overideActive": not ruleEvaluator.getEnableEvaluetion()
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet(request: Request):
-    return json.dumps({
+    return JSONResponse(content={
         "state": ioControl.getBoilerState(),
         "overideActive": not ruleEvaluator.getEnableEvaluetion(),
         "controlList": ruleEvaluator.exportRuleList()
@@ -47,13 +47,12 @@ def boilerGet(request: Request):
 def boilerRuleSet(request: Request):
     content = request.json()
     ruleEvaluator.setRuleLis(content["controlList"])
-    return json.dumps({
-    })
+    return JSONResponse(content={})
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow(request: Request):
     powerList = power.getPower()
-    return json.dumps({
+    return JSONResponse(content={
         "phase_EA": powerList[0]['ai'],
         "phase_EB": powerList[1]['ai'],
         "phase_EC": powerList[2]['ai'],
