@@ -19,8 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.route('/api/', methods=['GET'])
-def testApi():
+@app.route('/api', methods=['GET'])
+def testApi(request: Request):
     print('Hallo api route')
     return 'Hallo'
 
@@ -36,7 +36,7 @@ async def boilerSet(request: Request):
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
-def boilerGet():
+def boilerGet(request: Request):
     return json.dumps({
         "state": ioControl.getBoilerState(),
         "overideActive": not ruleEvaluator.getEnableEvaluetion(),
@@ -51,7 +51,7 @@ def boilerRuleSet(request: Request):
     })
 
 @app.route('/api/power/outputNow', methods=['POST'])
-def powerOutputNow():
+def powerOutputNow(request: Request):
     powerList = power.getPower()
     return json.dumps({
         "phase_EA": powerList[0]['ai'],
