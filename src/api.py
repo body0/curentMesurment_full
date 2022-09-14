@@ -44,8 +44,8 @@ def boilerGet(request: Request):
     })
     
 @app.route('/api/boiler/rule/set', methods=['POST'])
-def boilerRuleSet(request: Request):
-    content = request.json()
+async def boilerRuleSet(request: Request):
+    content = await request.json()
     ruleEvaluator.setRuleLis(content["controlList"])
     return JSONResponse(content={})
 
