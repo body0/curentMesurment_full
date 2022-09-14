@@ -8,7 +8,7 @@ if (os.geteuid() == 0):
 
 def getPhaseList(dpCount):
     # p = run( [ f'  {-19 if rootPriv else 0} ./run.out' ] ) 
-    p = run( [ './run.out', dpCount ] ) 
+    p = run( [ './run.out', str(dpCount) ] ) 
     if p.returncode != 0 :
         sys.exit("Eroor in subprogram (getting power)")  
     return loadData()
