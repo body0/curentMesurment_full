@@ -21,7 +21,8 @@ app.add_middleware(
 
 @app.route('/api/', methods=['GET'])
 def testApi():
-    return f'Hallo'
+    print('Hallo api route')
+    return 'Hallo'
 
 @app.route('/api/boiler/set', methods=['POST'])
 async def boilerSet(request: Request):
