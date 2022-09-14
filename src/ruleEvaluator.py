@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 ruleList = []
 activeRule = -1
@@ -92,7 +92,7 @@ def evalRules(fullPowerList):
     if not enableEvaluation:
         return
     (rId, res) = _evalRules(fullPowerList)
-    print(rId, res)
+    print(f"[acepted rule]: {rId}, {res}")
     if rId == -1:
         return res
     activeRule = rId
@@ -108,17 +108,17 @@ def _evalRules(fullPowerList):
         cType = rule["type"]
         resVal = rule["resultVal"]
         pld = rule["pld"]
-        print(cType, resVal, pld)
+        print(f"[testing rule]: {cType}, {resVal}, {pld}")
         if cType == "timeON" or cType == "timeOFF":
             if inRange(pld["startH"], pld["startM"], pld["endH"], pld["endM"]):
                 return (rId, resVal)
                      
         if cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
-            minTrigetTime = datetime.now() - datetime.timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
+            minTrigetTime = datetime.now() - timedelta(minutes=pld["holdFor_M"], hours=pld["holdFor_M"])
             trgPhase = pld["phase"] -1
             inPow = fullPowerList['data'][trgPhase]["ai"]
             outPow = fullPowerList['data'][trgPhase]["ro"]
-            if rId == activeRule and  rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
+            if rId == activeRule and rule["lastTrigeTs"] != None and rule["lastTrigeTs"] > minTrigetTime:
                 return (-1, resVal)
             if cType == "powInON":
                 if pld["powVal"] < inPow:
