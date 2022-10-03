@@ -78,26 +78,26 @@ def powerOutputNow(request: Request):
     })
 
 
-async def forward(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
-    while True:
-        data = await ws_a.receive_bytes()
-        print("websocket received:", data)
-        await ws_b.send(data)
+# async def forward(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
+#     while True:
+#         data = await ws_a.receive_bytes()
+#         print("websocket received:", data)
+#         await ws_b.send(data)
 
-async def reverse(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
-    while True:
-        data = await ws_b.recv()
-        await ws_a.send_text(data)
-        print("websocket sent:", data)
+# async def reverse(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
+#     while True:
+#         data = await ws_b.recv()
+#         await ws_a.send_text(data)
+#         print("websocket sent:", data)
 
-@app.websocket("/ws/cpap")
-async def websocket_a(cpId: str, ws_a: WebSocket):
-    await ws_a.accept()
-    async with websockets.connect(f"wss://cscloud.evprowebasto.com") as ws_b_client:
-        fwd_task = asyncio.create_task(forward(ws_a, ws_b_client))
-        rev_task = asyncio.create_task(reverse(ws_a, ws_b_client))
-        print("websocket connected")
-        await asyncio.gather(fwd_task, rev_task)
+# @app.websocket("/ws/cpap")
+# async def websocket_a(cpId: str, ws_a: WebSocket):
+#     await ws_a.accept()
+#     async with websockets.connect(f"wss://cscloud.evprowebasto.com") as ws_b_client:
+#         fwd_task = asyncio.create_task(forward(ws_a, ws_b_client))
+#         rev_task = asyncio.create_task(reverse(ws_a, ws_b_client))
+#         print("websocket connected")
+#         await asyncio.gather(fwd_task, rev_task)
 
 def getRoute():
     return app
