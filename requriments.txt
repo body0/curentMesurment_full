@@ -7,5 +7,6 @@ schedule
 scipy
 numpy
 fastapi
+websockets
 
-#pip3 install asyncio uvicorn psycopg2 paho-mqtt load_dotenv schedule scipy numpy fastapi
+#pip3 install asyncio uvicorn psycopg2 paho-mqtt load_dotenv schedule scipy numpy fastapi websockets

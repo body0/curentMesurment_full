@@ -90,10 +90,10 @@ async def reverse(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
         await ws_a.send_text(data)
         print("websocket sent:", data)
 
-@app.websocket("/ws/cpap/{cpId}")
+@app.websocket("/ws/cpap")
 async def websocket_a(cpId: str, ws_a: WebSocket):
     await ws_a.accept()
-    async with websockets.connect(f"wss://cscloud.evprowebasto.com/{cpId}") as ws_b_client:
+    async with websockets.connect(f"wss://cscloud.evprowebasto.com") as ws_b_client:
         fwd_task = asyncio.create_task(forward(ws_a, ws_b_client))
         rev_task = asyncio.create_task(reverse(ws_a, ws_b_client))
         print("websocket connected")
