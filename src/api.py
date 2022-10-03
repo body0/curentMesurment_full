@@ -1,6 +1,8 @@
-from fastapi import Body, FastAPI, status, Request, Response
+import asyncio
+from fastapi import Body, FastAPI, status, Request, Response, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import websockets
 
 import json
 import os
@@ -74,6 +76,28 @@ def powerOutputNow(request: Request):
         "phase_HB_pfac": powerList[1]['fo'],
         "phase_HC_pfac": powerList[2]['fo']
     })
+
+
+async def forward(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
+    while True:
+        data = await ws_a.receive_bytes()
+        print("websocket received:", data)
+        await ws_b.send(data)
+
+async def reverse(ws_a: WebSocket, ws_b: websockets.WebSocketClientProtocol):
+    while True:
+        data = await ws_b.recv()
+        await ws_a.send_text(data)
+        print("websocket sent:", data)
+
+@app.websocket("/ws/cpap/{cpId}")
+async def websocket_a(cpId: str, ws_a: WebSocket):
+    await ws_a.accept()
+    async with websockets.connect(f"wss://cscloud.evprowebasto.com/{cpId}") as ws_b_client:
+        fwd_task = asyncio.create_task(forward(ws_a, ws_b_client))
+        rev_task = asyncio.create_task(reverse(ws_a, ws_b_client))
+        print("websocket connected")
+        await asyncio.gather(fwd_task, rev_task)
 
 def getRoute():
     return app

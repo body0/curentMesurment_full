@@ -93,10 +93,13 @@ def evalRules(fullPowerList):
         return
     (rId, res) = _evalRules(fullPowerList)
     print(f"[rule result]: {rId}, {res}")
-    if rId == -1:
-        return res
-    activeRule = rId
-    ruleList[rId]["trigerCount"] += 1
+    # if rId == -1:
+    #     ruleList[rId]["trigerCount"] = 0
+    #     return res
+    # else if 
+    # ruleList[rId]["trigerCount"] += 1
+    # if (ruleList[rId]["trigerCount"] == 3):
+    #     activeRule = rId
     ruleList[rId]["lastTrigeTs"] = datetime.now()
     return res                  
              
@@ -122,16 +125,16 @@ def _evalRules(fullPowerList):
                 return (-1, resVal)
             print(f"{pld['powVal']}, {inPow}")
             if cType == "powInON":
-                if pld["powVal"] < inPow:
-                    return (rId, resVal)
-            elif cType == "powInOFF":
                 if pld["powVal"] > inPow:
                     return (rId, resVal)
+            elif cType == "powInOFF":
+                if pld["powVal"] < inPow:
+                    return (rId, resVal)
             elif cType == "powDiffON":
-                if pld["powVal"] < outPow:
+                if pld["powVal"] > outPow:
                     return (rId, resVal)
             elif cType == "powDiffOFF":
-                if pld["powVal"] > outPow:
+                if pld["powVal"] < outPow:
                     return (rId, resVal)
     activeRule = -1 #TODO (bad flow)
     return (-1, False)
