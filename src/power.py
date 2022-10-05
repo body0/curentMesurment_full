@@ -21,8 +21,8 @@ def getPowerAndMeta():
         analisis.scaleData([phaseList])
         sbl = analisis.shiftData([phaseList])
         if (sbl != None): break
+    print(sbl)
     pbl = analisis.getBatchPow(sbl)
-    print(pbl)
     return (pbl, sbl, phaseList)
 
 
