@@ -1,11 +1,12 @@
 import os.path
 import cMesurment
 import envVar
+from datetime import datetime
 
 
 
 curentBoilerState = False
-lastBolilerChange = None // TODO 
+lastBolilerChange = datetime.datetime(1970, 1, 1) 
 
 
 def getBoilerState():
