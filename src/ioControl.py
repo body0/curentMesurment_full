@@ -5,6 +5,7 @@ import envVar
 
 
 curentBoilerState = False
+lastBolilerChange = None // TODO 
 
 
 def getBoilerState():
@@ -15,6 +16,11 @@ def setBoilerState(targetState):
     global curentBoilerState
     writeGPIO(envVar.BOILER_GPIO_ID, not targetState)
     curentBoilerState = targetState
+    
+def getLastBolierChange():
+    return lastBolilerChange
+
+#  ===== INTERNAL =====
 
 def setGPIO(portID):
     with open("/sys/class/gpio/export", 'w') as file:
@@ -44,7 +50,6 @@ def mesure():
     print('START mesurment')
     #phaseList = mesureAllPhase()
     phaseList = cMesurment.getPhaseList(envVar.DATA_POINT_TAKEN)
-    
     for i in range(len(phaseList)):
         phaseList[i]["ci"] = parseValuesInList(phaseList[i]["ci"])
         phaseList[i]["co"] = parseValuesInList(phaseList[i]["co"])

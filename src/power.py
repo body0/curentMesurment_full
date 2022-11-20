@@ -21,7 +21,7 @@ def getPowerAndMeta():
         analisis.scaleData([phaseList])
         sbl = analisis.shiftData([phaseList])
         if (sbl != None): break
-    # print(sbl)
+    # print(sbl) 
     pbl = analisis.getBatchPow(sbl)
     return (pbl, sbl, phaseList)
 
@@ -100,7 +100,7 @@ def watherTick():
         pMesScheduler.run() """
 
 def init():
-    # schedule.every(watcherPeriod).seconds.do(run_threaded, watherTick)
-    schedule.every(watcherPeriod).seconds.do(watherTick)
+    pass
+    # schedule.every(watcherPeriod).seconds.do(watherTick)
     
 init()

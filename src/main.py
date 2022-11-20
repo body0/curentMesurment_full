@@ -20,8 +20,6 @@ print("INIT, start init")
 db.connectToDb()
 mqtt.init()
 power.startWatcher()
-
-     
 print(f"INIT, start api on {envVar.API_PORT}")
 
 

@@ -1,7 +1,18 @@
 from datetime import datetime, timedelta
 
 ruleList = []
-enableEvaluation = True
+activeRule = -1
+enableEvaluation = False
+
+
+def setEnableEvaluation(newVal):
+    global activeRule, enableEvaluation
+    if enableEvaluation != newVal:
+         activeRule = -1
+    enableEvaluation = newVal
+    
+def getEnableEvaluetion():
+    return enableEvaluation
 
 def setRuleLis(newList):
     global ruleList, activeRule
@@ -16,7 +27,6 @@ def _parseRule(rule):
     cType = rule["type"]
     pld = rule["value"]
     negate = bool(cType == "timeOFF" or cType == "powInOFF" or cType == "powDiffOFF")
-    shoftType = "other"
     if cType == "timeON" or cType == "timeOFF":
         parsedVal = {
             "startH": pld["startH"],
@@ -24,7 +34,6 @@ def _parseRule(rule):
             "endH": pld["endH"],
             "endM": pld["endM"]
         }
-        shoftType = "time"
     elif cType == "powInON" or cType == "powInOFF" or cType == "powDiffON" or cType == "powDiffOFF":
         parsedVal = {
             "powVal": pld["powVal"],
@@ -32,7 +41,6 @@ def _parseRule(rule):
             "holdFor_H": pld["holdFor_H"],
             "holdFor_M": pld["holdFor_M"]
         }
-        shoftType = "poIn" if (cType == "powInON" or cType == "powInOFF") else "powDiff"
     else :
         print("=====================\n     WRONG PARM      \n=====================")
         return
@@ -40,16 +48,9 @@ def _parseRule(rule):
         "enable": rule["enable"],
         "type": cType,
         "pld": parsedVal,
-        "meta": {
-            "trgToSet": 3,
-            "shortType":  shoftType,
-            "negateTriger":  negate
-        },
-        "din":{
-            "trgCount": 0,
-            "reverseTrgCount": 0,
-            "lastSet": datetime.datetime(1970, 1, 1) 
-        }
+        "resultVal": negate,
+        "lastTrigeTs": None,
+        "trigerCount": 0
     }
     
     
@@ -79,8 +80,7 @@ def _exportRule(rule):
             "holdFor_M": pld["holdFor_M"]
         }
     else :
-        print("=====================\n     WRONG PARM     \n=====================")
-        
+        print("=====================\n     WRONG PARM      \n=====================")
     return {
         "enable": rule["enable"],
         "type": cType,

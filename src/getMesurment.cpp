@@ -56,7 +56,7 @@ typedef struct {
 } PhData;
 
 void outputVal(Common env, int phId, PhData phaseList) {
-    fprintf(env.outDesc, ">%d,%d,%lld,%lld\n", phId, env.sampleCount,
+    fprintf(env.outDesc, ">%d,%d,%lld,%lld  \n", phId, env.sampleCount,
             phaseList.startTime, phaseList.endTime);
     // clock_t lastTimePoint = phaseList.startPoint;
     // double const multConst = 1000;   
@@ -93,10 +93,10 @@ void readIO_nullRun(Common env, unsigned char addrA, unsigned char addrB,
     unsigned char* tmp = (unsigned char*)malloc(2 * sizeof(char));
     for (int sampleId = 0; sampleId < runNum; sampleId++) {
         ioctl(env.cBus, I2C_SLAVE, addrA);
-        read(env.cBus, tmp, 2);
-        read(env.vBus, tmp, 2);
+        (void)read(env.cBus, tmp, 2);
+        (void)read(env.vBus, tmp, 2);
         ioctl(env.cBus, I2C_SLAVE, addrB);
-        read(env.cBus, tmp, 2);
+        (void)read(env.cBus, tmp, 2);
     }
     // free(tmp); //Small amount of mem, do not switch contexts
 }
@@ -105,11 +105,11 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
     PhData ret = *retRef;
     ioctl(env.cBus, I2C_SLAVE, addrA);
     ioctl(env.cBus, I2C_SLAVE, addrA);
-    write(env.cBus, CURENT_CONFIG_01, 3);
-    write(env.cBus, READ_CONF, 1);
+    (void)write(env.cBus, CURENT_CONFIG_01, 3);
+    (void)write(env.cBus, READ_CONF, 1);
     ioctl(env.cBus, I2C_SLAVE, addrB);
-    write(env.cBus, CURENT_CONFIG_23, 3);
-    write(env.cBus, READ_CONF, 1);
+    (void)write(env.cBus, CURENT_CONFIG_23, 3);
+    (void)write(env.cBus, READ_CONF, 1);
 
     struct timeval start, end;
     // steady_clock::time_point subStart, subEnd;
@@ -121,7 +121,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         // read in
         ioctl(env.cBus, I2C_SLAVE, addrA);
         // write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
+        (void)read(env.cBus, &(ret.cOut[sampleId * 2]), 2);
         ret.timePoints[sampleId][0] = SCLC::now();
 
         /* subEnd = clock();
@@ -131,7 +131,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
 
         // read voltage
         // write(env.vBus, READ_CONF, 1);
-        read(env.vBus, &(ret.v[sampleId * 2]), 2);
+        (void)read(env.vBus, &(ret.v[sampleId * 2]), 2);
         ret.timePoints[sampleId][1] = SCLC::now();
 
         /* subEnd = clock();
@@ -142,7 +142,7 @@ void readIO(Common env, unsigned char addrA, unsigned char addrB,
         // read out
         ioctl(env.cBus, I2C_SLAVE, addrB);
         // write(env.cBus, READ_CONF, 1);
-        read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
+        (void)read(env.cBus, &(ret.cIn[sampleId * 2]), 2);
         ret.timePoints[sampleId][2] = SCLC::now();
 
         /* subEnd = clock();
