@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 curentBoilerState = False
-lastBolilerChange = datetime.datetime(1970, 1, 1) 
+lastBolilerChange = datetime(1970, 1, 1) 
 
 
 def getBoilerState():
