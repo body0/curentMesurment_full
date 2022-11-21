@@ -3,6 +3,7 @@ import psycopg2
 from dotenv import load_dotenv
 from pathlib import Path
 
+dbEnable = False
 load_dotenv(dotenv_path=Path('../upstream.env'))
 conn = None
 dbPowLogEnabled = True

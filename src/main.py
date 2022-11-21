@@ -36,7 +36,7 @@ print(f"INIT, start api on {envVar.API_PORT}")
 
 
 async def startServer():
-    config = uvicorn.Config(api.getRoute(), host="0.0.0.0", port=envVar.API_PORT, log_level="debug")
+    config = uvicorn.Config(api.getRoute(), host="0.0.0.0", port=envVar.API_PORT, log_level="info")
     server = uvicorn.Server(config)
     await server.serve()
 
