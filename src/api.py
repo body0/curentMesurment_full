@@ -34,15 +34,18 @@ async def boilerSet(request: Request):
         ioControl.setBoilerState(content['state'])
     return JSONResponse(content={
         "state": ioControl.getBoilerState(),
-        "overideActive": not ruleEvaluator.getEnableEvaluetion()
+        # "overideActive": not ruleEvaluator.getEnableEvaluetion()
+        "overideActive": False,
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
 def boilerGet(request: Request):
     return JSONResponse(content={
         "state": ioControl.getBoilerState(),
-        "overideActive": not ruleEvaluator.getEnableEvaluetion(),
-        "controlList": ruleEvaluator.exportRuleList()
+        # "overideActive": not ruleEvaluator.getEnableEvaluetion(),
+        "overideActive": False,
+        # "controlList": ruleEvaluator.exportRuleList()
+        "controlList": []
     })
     
 @app.route('/api/boiler/rule/set', methods=['POST'])
@@ -75,6 +78,23 @@ def powerOutputNow(request: Request):
         "phase_HA_pfac": powerList[0]['fo'],
         "phase_HB_pfac": powerList[1]['fo'],
         "phase_HC_pfac": powerList[2]['fo']
+    })
+    
+@app.route('/api/charger/get', methods=['POST'])
+def boilerGet(request: Request):
+    return JSONResponse(content={
+        "state": None,
+        "overideActive": False,
+        "maxPower": 0
+    })
+    
+@app.route('/api/charger/set', methods=['POST'])
+async def boilerSet(request: Request):
+    content = await request.json()
+    return JSONResponse(content={
+        "state": None,
+        "overideActive": False,
+        "maxPower": 0
     })
 
 

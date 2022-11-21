@@ -126,12 +126,12 @@ class CentralSystem:
 
 usedCharger = None
 
- def register_charger(self, cp: ChargePoint):
-        queue = asyncio.Queue(maxsize=1)
-        task = asyncio.create_task(self.start_charger(cp, queue))
-        self._chargers[cp] = task
-        print(self._chargers)
-        return queue
+def register_charger(self, cp: ChargePoint):
+    queue = asyncio.Queue(maxsize=1)
+    task = asyncio.create_task(self.start_charger(cp, queue))
+    self._chargers[cp] = task
+    print(self._chargers)
+    return queue
 
 
 
