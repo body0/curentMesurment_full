@@ -94,7 +94,7 @@ def watherTick():
     phaseList = ioControl.mesure()
     db.tryAddPow(pl)
     mqtt.publish(phaseList)
-    ruleEvaluator.evalRules(analisis.getPowMeta(pl))
+    # ruleEvaluator.evalRules(analisis.getPowMeta(pl))
     """ if watcherRuning:
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
         pMesScheduler.run() """

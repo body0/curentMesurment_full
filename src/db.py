@@ -3,7 +3,7 @@ import psycopg2
 from dotenv import load_dotenv
 from pathlib import Path
 
-dbEnable = False
+# dbEnable = False
 load_dotenv(dotenv_path=Path('../upstream.env'))
 conn = None
 dbPowLogEnabled = True
@@ -16,6 +16,7 @@ def tryAddPow(powerList):
 
 def addPowRes(powerList):
     global conn
+    if (conn): return
     cur = conn.cursor()
     for pPhaseId in range(len(powerList)):
         powA = powerList[pPhaseId]['ai']
@@ -44,6 +45,7 @@ def selectTest():
 
 
 def connectToDb():
+    # global conn, dbEnable
     global conn
     _host = os.getenv('DB_HOST')
     _port = os.getenv('DB_PORT')
@@ -56,3 +58,4 @@ def connectToDb():
     user="apiuser",
     password=os.getenv('DB_PASS'))
     print("DB, connected")
+    dbEnable = True
