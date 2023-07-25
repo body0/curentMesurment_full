@@ -8,17 +8,21 @@ import envVar
 import uvicorn
 
 import ioControl
+import cMesurment
 import power
 import ruleEvaluator
 import db
 import mqtt
+import autoCP
 import api
 
 
 
 print("INIT, start init")
-db.connectToDb()
+cMesurment.init()
+autoCP.init()
 mqtt.init()
+db.connectToDb()
 power.startWatcher()
 print(f"INIT, start api on {envVar.API_PORT}")
 

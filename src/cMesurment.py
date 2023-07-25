@@ -2,12 +2,30 @@ import sys
 import os
 from subprocess import run
 
-rootPriv=False
-if (os.geteuid() == 0): 
-    rootPriv=True
+
+enable = False
+mockLen = 10
+mockData = {
+    "ci": [0 for i in range(mockLen)],
+    "co": [0 for i in range(mockLen)],
+    "vv": [0 for i in range(mockLen)],
+    "ti": [0 for i in range(mockLen)],
+    "to": [0 for i in range(mockLen)],
+    "tv": [0 for i in range(mockLen)],
+    "sTime": 0,
+    "eTime": 0,
+    "sCount": mockLen
+}
+    
+def init():
+    global enable
+    # if (os.geteuid() == 0): 
+        # raise Exception("Roor priv required")
+    enable = True
 
 def getPhaseList(dpCount):
-    # p = run( [ f'  {-19 if rootPriv else 0} ./run.out' ] ) 
+    if not enable:
+        return mockData
     p = run( [ './run.out', str(dpCount) ] ) 
     if p.returncode != 0 :
         sys.exit("Eroor in subprogram (getting power)")  

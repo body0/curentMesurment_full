@@ -1,7 +1,9 @@
 import mqtt
 import ioControl
+import cMesurment
 import time
 
+cMesurment.init()
 mqtt.init()
 
 while True:

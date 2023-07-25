@@ -8,15 +8,15 @@ load_dotenv(dotenv_path=Path('../upstream.env'))
 conn = None
 dbPowLogEnabled = True
 
-def tryAddPow(powerList):
-    global conn
-    if conn == None or not dbPowLogEnabled:
-        return
-    addPowRes(powerList)
+# def tryAddPow(powerList):
+#     global conn
+#     if conn == None or not dbPowLogEnabled:
+#         return
+#     addPowRes(powerList)
 
 def addPowRes(powerList):
     global conn
-    if (conn): return
+    if (conn): return False
     cur = conn.cursor()
     for pPhaseId in range(len(powerList)):
         powA = powerList[pPhaseId]['ai']
@@ -27,6 +27,7 @@ def addPowRes(powerList):
                     [pPhaseId, powA, powB, powAalt, powBalt])
     conn.commit()
     #conn.close()
+    return True
     
 def selectTest():
     cur = conn.cursor()

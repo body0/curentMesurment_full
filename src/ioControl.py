@@ -4,10 +4,16 @@ import envVar
 from datetime import datetime
 
 
-
+enable = False
 curentBoilerState = False
-lastBolilerChange = datetime(1970, 1, 1) 
+# lastBolilerChange = datetime(1970, 1, 1) 
 
+def init():
+    global enable
+    enable = True
+    setGPIO(envVar.BOILER_GPIO_ID)
+    setBoilerState(curentBoilerState)
+    
 
 def getBoilerState():
     global curentBoilerState
@@ -15,23 +21,26 @@ def getBoilerState():
 
 def setBoilerState(targetState):
     global curentBoilerState
+    if enable: return False
     writeGPIO(envVar.BOILER_GPIO_ID, not targetState)
     curentBoilerState = targetState
+    return True
     
-def getLastBolierChange():
-    return lastBolilerChange
+# def getLastBolierChange():
+    # return lastBolilerChange
 
 #  ===== INTERNAL =====
 
 def setGPIO(portID):
+    if os.path.isdir(f"/sys/class/gpio/gpio{portID}"): return
     with open("/sys/class/gpio/export", 'w') as file:
         file.write(str(portID))
     with open(f"/sys/class/gpio/gpio{portID}/direction", 'w') as file:
         file.write("out")
 
 def writeGPIO(portID, value):
-    if not os.path.isdir(f"/sys/class/gpio/gpio{portID}"):
-       setGPIO(portID) 
+    # if not os.path.isdir(f"/sys/class/gpio/gpio{portID}"):
+    #    setGPIO(portID) 
     with open(f"/sys/class/gpio/gpio{portID}/value", 'w') as file:
         file.write('1' if value else '0')
 
@@ -61,6 +70,3 @@ def mesure():
     
     # print('END mesurment')
     return phaseList
-
-# INIT
-setBoilerState(curentBoilerState)

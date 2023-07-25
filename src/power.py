@@ -27,23 +27,20 @@ def getPowerAndMeta():
 
 
 watcherPeriod = 40
-watcherRuning = False
 curentTimer = None
 
 
 
 def startWatcher():
-    global watcherPeriod, watcherRuning, curentTimer
+    global watcherPeriod, curentTimer
     print("Pow, starting watcher")
-    watcherRuning = True  
     clearWatcher()
     curentTimer = run_continuously() 
     
     
 def stopWatcher():
-    global watcherPeriod, watcherRuning
+    global watcherPeriod
     print("Pow, stopping watcher")
-    watcherRuning = False  
     clearWatcher()
     
     
@@ -59,18 +56,7 @@ def clearWatcher():
     
 
 def run_continuously(interval=1):
-    """Continuously run, while executing pending jobs at each
-    elapsed time interval.
-    @return cease_continuous_run: threading. Event which can
-    be set to cease continuous run. Please note that it is
-    *intended behavior that run_continuously() does not run
-    missed jobs*. For example, if you've registered a job that
-    should run every minute and you set a continuous run
-    interval of one hour then your job won't be run 60 times
-    at each interval but only once.
-    """
     cease_continuous_run = threading.Event()
-
     class ScheduleThread(threading.Thread):
         @classmethod
         def run(cls):
@@ -99,8 +85,7 @@ def watherTick():
         curentTimer = pMesScheduler.enter(watcherPeriod, 1, watherTick)
         pMesScheduler.run() """
 
-def init():
-    pass
+# def init():
+    # pass
     # schedule.every(watcherPeriod).seconds.do(watherTick)
     
-init()
