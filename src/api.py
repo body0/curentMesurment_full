@@ -35,7 +35,7 @@ async def boilerSet(request: Request):
     return JSONResponse(content={
         "state": ioControl.getBoilerState(),
         # "overideActive": not ruleEvaluator.getEnableEvaluetion()
-        "overideActive": True,
+        "overideActive": ruleEvaluator.getBoilerExable(),
     })
 
 @app.route('/api/boiler/get', methods=['POST'])
@@ -43,16 +43,20 @@ def boilerGet(request: Request):
     return JSONResponse(content={
         "state": ioControl.getBoilerState(),
         # "overideActive": not ruleEvaluator.getEnableEvaluetion(),
-        "overideActive": True,
+        "overideActive": ruleEvaluator.getBoilerExable(),
         # "controlList": ruleEvaluator.exportRuleList()
-        "controlList": []
+        # "controlList": []
     })
     
-@app.route('/api/boiler/rule/set', methods=['POST'])
-async def boilerRuleSet(request: Request):
+@app.route('/api/rule/set', methods=['POST'])
+async def ruleSet(request: Request):
     content = await request.json()
     ruleEvaluator.setRuleLis(content["controlList"])
-    return JSONResponse(content={})
+    return JSONResponse(content=ruleEvaluator.exportRuleList())
+
+@app.route('/api/rule/get', methods=['GET'])
+async def ruleGet(request: Request):
+    return JSONResponse(content=ruleEvaluator.exportRuleList())
 
 @app.route('/api/power/outputNow', methods=['POST'])
 def powerOutputNow(request: Request):

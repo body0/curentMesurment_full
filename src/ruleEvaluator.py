@@ -64,6 +64,25 @@ trigDelta = {
     TargetType.WALLBOX_VAL: timedelta(seconds=30), 
 }
 
+def setBoilerEnable(value):
+    # nextTrigEnable[TargetType.BOILER_SWITCH] = datetime.datetime(1970, 1, 1)
+    trigEnable[TargetType.BOILER_SWITCH] = value
+    for rule in ruleList:
+        if rule["target"] == TargetType.BOILER_SWITCH:
+            rule["checkCount"] = 0
+            
+    
+def setWallboxEnable(value):
+    # nextTrigEnable[TargetType.WALLBOX_SWITCH] = datetime.datetime(1970, 1, 1)
+    # nextTrigEnable[TargetType.WALLBOX_VAL] = datetime.datetime(1970, 1, 1)
+    trigEnable[TargetType.WALLBOX_SWITCH] = value
+    trigEnable[TargetType.WALLBOX_VAL] = value
+    for rule in ruleList:
+        if rule["target"] == TargetType.WALLBOX_SWITCH or rule["target"] == TargetType.WALLBOX_VAL:
+            rule["checkCount"] = 0
+
+def getBoilerExable():
+    return trigEnable[TargetType.BOILER_SWITCH]
 
 def setRuleLis(newList):
     global ruleList
@@ -72,10 +91,10 @@ def setRuleLis(newList):
         newRuleList.append(ConfigNode(rule))
     ruleList = newRuleList
 
-def setEvalEnable(target, val):
-    global ruleList
-    for rule in ruleList:
-        if (target == rule.target): rule.enable = val
+# def setEvalEnable(target, val):
+#     global ruleList
+#     for rule in ruleList:
+#         if (target == rule.target): rule.enable = val
     
 def exportRuleList():
     global ruleList
@@ -94,10 +113,19 @@ def evalRules(fullPowerList):
         target = rule.target
         check = rule.check
         checkParam = rule.checkParam
-        if ((trigEnable[target] or nextTrigEnable[target] < now or not rule.enable) and (
-            (CheckType.POW_DIFF == check  and -1*powDif[checkParam[0]] > checkParam[1]) or
-            (CheckType.POW_IN == check and powIn[checkParam[0]] > checkParam[1]) or
-            CheckType.DEF == check)):
+        if (not trigEnable[target] or nextTrigEnable[target] < now or not rule.enable): continue
+        print('=================')
+        print(powDif)
+        print(powIn)
+        print(rule)
+        if((
+            (TargetType.BOILER_SWITCH == target or TargetType.WALLBOX_SWITCH == target) and (
+                (CheckType.POW_DIFF == check and checkParam['less'] and powDif[checkParam['phase']] > checkParam['power']) or
+                (CheckType.POW_DIFF == check and not checkParam['less'] and powDif[checkParam['phase']] < checkParam['power']) or
+                (CheckType.POW_IN == check and checkParam['less'] and powIn[checkParam['phase']] > checkParam['power']) or
+                (CheckType.POW_IN == check and not checkParam['less'] and powIn[checkParam['phase']] < checkParam['power']) ))or
+            CheckType.DEF == check):
+            # todo, incrementd
             value = rule.value
             if (TargetType.BOILER_SWITCH == target):
                 ioControl.setBoilerState(value)
@@ -108,10 +136,14 @@ def evalRules(fullPowerList):
                 if (value[0] == WallbocWalOperation.FIXED):
                     trgPow = value[1]
                 elif (value[0] == WallbocWalOperation.LESS_THAN_DIFF_MIN):
-                    trgPow = min(powDif[0], powDif[1], powDif[2])
+                    trgPow = -min(powDif[0], powDif[1], powDif[2]) -value[1]
                 autoCP.setPower(trgPow)
-
-    
+            nextTrigEnable[target] = datetime.now() + trigDelta[target]
+            rule["lastTrig"] = datetime.now()
+            rule["checkCount"] = 0
+            rule["trigCount"] += 1
+            return True
+    return False
     
 def inRange(startH, startM, endH, endM):
     if startH == endH and startM == endM:
